@@ -251,7 +251,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 document.getElementById('Subcategories3').style.display = 'block';
             }
         }
-
     </script>
     </div>
 </body>
