@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title  -->
+    <title>Karl - Fashion Ecommerce Template | Checkout</title>
+
+    <!-- Favicon  -->
+    <link rel="icon" href="img/core-img/favicon.ico">
+
+    <!-- Core Style CSS -->
+    <link rel="stylesheet" href="css/core-style.css">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Responsive CSS -->
+    <link href="css/responsive.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="catagories-side-menu">
+        <!-- Close Icon -->
+        <div id="sideMenuClose">
+            <i class="ti-close"></i>
+        </div>
+        <!--  Side Nav  -->
+        <div class="nav-side-menu">
+            <div class="menu-list">
+                <h6>Categories</h6>
+                <ul id="menu-content" class="menu-content collapse out">
+                    <!-- Single Item -->
+                    <li data-toggle="collapse" data-target="#women" class="collapsed active">
+                        <a href="#">Woman wear <span class="arrow"></span></a>
+                        <ul class="sub-menu collapse" id="women">
+                            <li><a href="#">Dresses</a></li>
+                            <li><a href="#">Co-ords sets</a></li>
+                            <li><a href="#">Tops</a></li>
+                            <li><a href="#">Bottoms</a></li>
+                            <li><a href="#">Jackets</a></li>
+                            <li><a href="#">Jumpsuits</a></li>
+                            <li><a href="#">Scarves &amp; Stoles</a></li>
+                        </ul>
+                    </li>
+                  
+                    <!-- Single Item -->
+                    <li data-toggle="collapse" data-target="#bags" class="collapsed">
+                        <a href="#">Accessories <span class="arrow"></span></a>
+                        <ul class="sub-menu collapse" id="bags">
+                            <li><a href="#">Bags</a></li>
+                            <li><a href="#">Jewellery</a></li>
+                            <li><a href="#">Eyewear</a></li>
+                            <li><a href="#">watches</a></li>
+                        </ul>
+                    </li>
+                    <!-- Single Item -->
+                    <li data-toggle="collapse" data-target="#footwear" class="collapsed">
+                        <a href="#">Footwear <span class="arrow"></span></a>
+                        <ul class="sub-menu collapse" id="footwear">
+                            <li><a href="#">Shoes</a></li>
+                            <li><a href="#">Sandals</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="wrapper">
+
+           <!--Top Header-->
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="row">
+            	<div class="col-10 col-sm-8 col-md-5 col-lg-4">
+                    <div class="currency-picker">
+                        
+                    </div>
+                    <div class="language-dropdown">
+                        
+                    </div>
+                    
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-4 d-none d-lg-none d-md-block d-lg-block">
+                	<div class="text-center"><p class="top-header_middle-text"></p></div>
+                </div>
+                <div class="col-2 col-sm-4 col-md-3 col-lg-4 text-right">
+                	<span class="user-menu d-block d-lg-none"><i class="anm anm-user-al" aria-hidden="true"></i></span>
+                    <ul class="customer-links list-inline">
+                        <li><a href="login.php">Login</a></li>
+                        <li><a href="register.php">Create Account</a></li>
+                       
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Top Header -->
+
+        <!-- ****** Header Area Start ****** -->
+        <header class="header_area bg-img background-overlay-white" style="background-image: url(img/bg-img/bg-11.jpg);">
+            <!-- Top Header Area Start -->
+            <div class="top_header_area">
+                <div class="container h-100">
+                    <div class="row h-100 align-items-center justify-content-end">
+
+                        <div class="col-12 col-lg-7">
+                            <div class="top_single_area d-flex align-items-center">
+                                <!-- Logo Area -->
+                                <div class="top_logo">
+                                    <a href="#"><img src="img/core-img/aura_.png" alt=""></a>
+                                </div>
+                                <!-- Cart & Menu Area -->
+                                <div class="header-cart-menu d-flex align-items-center ml-auto">
+                                    <!-- Cart Area -->
+                                    <div class="cart">
+                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        <!-- Cart List Area Start -->
+                                        <ul class="cart-list">
+                                            <li>
+                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
+                                                <div class="cart-item-desc">
+                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
+                                                    <p>1x - <span class="price">₹3,290</span></p>
+                                                </div>
+                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
+                                                <div class="cart-item-desc">
+                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
+                                                    <p>1x - <span class="price">₹1,690</span></p>
+                                                </div>
+                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
+                                            </li>
+                                            <li class="total">
+                                                <span class="pull-right">Total: ₹4,980.00</span>
+                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
+                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="header-right-side-menu ml-15">
+                                        <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Header Area End -->
+            <div class="main_header_area">
+                <div class="container h-100">
+                    <div class="row h-100">
+                        <div class="col-12 d-md-flex justify-content-between">
+                            <!-- Header Social Area -->
+                            <div class="header-social-area">
+                                <a href="https://in.pinterest.com/stylebyand/"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                                <a href="https://www.facebook.com/stylebyand/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                <a href="https://twitter.com/stylebyand/"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                <a href="https://www.youtube.com/anddesignsindia"><i class="fa fa-youtube-square" aria-hidden="true"></i></a>
+                                <a href="https://www.instagram.com/stylebyand/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                            </div>
+                            <!-- Menu Area -->
+                            <div class="main-menu-area">
+                                <nav class="navbar navbar-expand-lg align-items-start">
+
+                                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#karl-navbar" aria-controls="karl-navbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"><i class="ti-menu"></i></span></button>
+
+                                    <div class="collapse navbar-collapse align-items-start collapse" id="karl-navbar">
+                                        <ul class="navbar-nav animated" id="nav">
+                                            <li class="nav-item active"><a class="nav-link" href="index.php">Home</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="shop.php">Products</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="blog.php">Blog</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+                                            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Account</a>
+                                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                                     <a class="dropdown-item" href="#">Profile</a>
+                                                     <a class="dropdown-item" href="#">Wishlist</a>
+                                                     <a class="dropdown-item" href="logout.php">Logout</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ****** Header Area End ****** -->
+
+        <!-- ****** Checkout Area Start ****** -->
+        <div class="checkout_area section_padding_100">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-12 col-md-6">
+                        <div class="checkout_details_area mt-50 clearfix">
+
+                            <div class="cart-page-heading">
+                                <h5>Billing Address</h5>
+                            </div>
+
+                            <form action="#" method="post">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="first_name">First Name <span>*</span></label>
+                                        <input type="text" class="form-control" id="first_name" value="" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="last_name">Last Name <span>*</span></label>
+                                        <input type="text" class="form-control" id="last_name" value="" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="country">Country <span>*</span></label>
+                                        <select class="custom-select d-block w-100" id="country">
+                                        <option value="usa">United States</option>
+                                        <option value="uk">United Kingdom</option>
+                                        <option value="ger">Germany</option>
+                                        <option value="fra">France</option>
+                                        <option value="ind">India</option>
+                                        <option value="aus">Australia</option>
+                                        <option value="bra">Brazil</option>
+                                        <option value="cana">Canada</option>
+                                    </select>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="street_address">Address <span>*</span></label>
+                                        <input type="text" class="form-control mb-3" id="street_address" value="">
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="postcode">Postcode <span>*</span></label>
+                                        <input type="text" class="form-control" id="postcode" value="">
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="city">Town/City <span>*</span></label>
+                                        <input type="text" class="form-control" id="city" value="">
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="phone_number">Phone No <span>*</span></label>
+                                        <input type="number" class="form-control" id="phone_number" min="0" value="">
+                                    </div>
+                                    <div class="col-12 mb-4">
+                                        <label for="email_address">Email Address <span>*</span></label>
+                                        <input type="email" class="form-control" id="email_address" value="">
+                                    </div>
+
+                                    <div class="col-12">
+                                        
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-5 ml-lg-auto">
+                        <div class="order-details-confirmation">
+
+                            <div class="cart-page-heading">
+                                <h5>Your Order</h5>
+                                <p>The Details</p>
+                            </div>
+
+                            <ul class="order-details-form mb-4">
+                                <li><span>Product</span> <span>Total</span></li>
+                                <li><span>Cocktail Yellow dress</span> <span>$59.90</span></li>
+                                <li><span>Subtotal</span> <span>$59.90</span></li>
+                                <li><span>Shipping</span> <span>Free</span></li>
+                                <li><span>Total</span> <span>$59.90</span></li>
+                            </ul>
+
+
+                            <div id="accordion" role="tablist" class="mb-4">
+                                <div class="card">
+                                    <div class="card-header" role="tab" id="headingOne">
+                                        <h6 class="mb-0">
+                                            <a data-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne"><i class="fa fa-circle-o mr-3"></i>Paypal</a>
+                                        </h6>
+                                    </div>
+
+                                    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pharetra tempor so dales. Phasellus sagittis auctor gravida. Integ er bibendum sodales arcu id te mpus. Ut consectetur lacus.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" role="tab" id="headingTwo">
+                                        <h6 class="mb-0">
+                                            <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"><i class="fa fa-circle-o mr-3"></i>cash on delievery</a>
+                                        </h6>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo quis in veritatis officia inventore, tempore provident dignissimos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="#" class="btn karl-checkout-btn">Place Order</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- ****** Checkout Area End ****** -->
+
+        <!-- ****** Footer Area Start ****** -->
+        <footer class="footer_area">
+            <div class="container">
+                <div class="row">
+                    <!-- Single Footer Area Start -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="single_footer_area">
+                            <div class="footer-logo">
+                                <img src="img/core-img/aura_.png" alt="">
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!-- Single Footer Area Start -->
+                    <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                        <div class="single_footer_area">
+                            <ul class="footer_widget_menu">
+                                <li><a href="#">About</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Faq</a></li>
+                                <li><a href="#">Returns</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Single Footer Area Start -->
+                    <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+                        <div class="single_footer_area">
+                            <ul class="footer_widget_menu">
+                                <li><a href="#">My Account</a></li>
+                                <li><a href="#">Shipping</a></li>
+                                <li><a href="#">Our Policies</a></li>
+                                <li><a href="#">Afiliates</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Single Footer Area Start -->
+                    <div class="col-12 col-lg-5">
+                        <div class="single_footer_area">
+                            <div class="footer_heading mb-30">
+                                <h6>Subscribe to our newsletter</h6>
+                            </div>
+                            <div class="subscribtion_form">
+                                <form action="#" method="post">
+                                    <input type="email" name="mail" class="mail" placeholder="Your email here">
+                                    <button type="submit" class="submit">Subscribe</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="line"></div>
+
+                <!-- Footer Bottom Area Start -->
+                <div class="footer_bottom_area">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="footer_social_area text-center">
+                                <a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- ****** Footer Area End ****** -->
+    </div>
+    <!-- /.wrapper end -->
+
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+    <script src="js/jquery/jquery-2.2.4.min.js"></script>
+    <!-- Popper js -->
+    <script src="js/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Plugins js -->
+    <script src="js/plugins.js"></script>
+    <!-- Active js -->
+    <script src="js/active.js"></script>
+
+</body>
+
+</html>
