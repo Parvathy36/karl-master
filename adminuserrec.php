@@ -46,7 +46,10 @@
     <div class="sidebar">
         <div class="logo"></div>
         <ul class="menu">
-            <li class="active"><a href="#"><i class="fas fa-store"></i>
+            <li><a href="admin.php"><i class="fas fa-tachometer"></i>
+                    <span>Dashboard</span></a>
+            </li>
+            <li><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
             <li><a href="#"><i class="fas fa-lightbulb"></i>
@@ -55,7 +58,7 @@
             <li><a href="#"><i class="fas fa-clipboard-list"></i>
                     <span>Orders</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-users"></i>
+            <li class="active"><a href="adminuserrec.php"><i class="fas fa-users"></i>
                     <span>Users Record</span></a>
             </li>
             <li><a href="#"><i class="fas fa-question-circle"></i>

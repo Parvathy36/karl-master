@@ -4,12 +4,6 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php
-if(isset($_session['email'])){
-    header("location: guestindex.php");
-    exit();
-}
-?>
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="">
