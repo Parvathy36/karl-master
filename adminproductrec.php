@@ -36,6 +36,9 @@ if ($image === false) {
     exit;
 }
 
+$imageType = $_FILES['image']['type']; // Get the MIME type of the uploaded file
+
+
 // Prepare SQL statement with placeholders for the image
 $sql = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id)
         VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -48,10 +51,12 @@ if ($stmt) {
 
     // Execute the statement
     if (mysqli_stmt_execute($stmt)) {
-        echo "Product added successfully.";
+        echo "<script>alert('Product added successfully.')</script>";
+        header("Location: adminproductrec.php");
+        exit; // Make sure to exit after redirection
     } else {
-        echo "Error: " . mysqli_stmt_error($stmt);
-    }
+        echo "<script>alert('Error: " . mysqli_stmt_error($stmt) . "')</script>";
+    }                                                                                                                                                                                                                                                                                                       
 
     // Close the statement
     mysqli_stmt_close($stmt);
@@ -105,6 +110,44 @@ if ($stmt) {
         }
 
 /* Add more styles as needed */
+
+/* Table styles */
+table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    /* Table header styles */
+    th {
+        background-color: #f2f2f2;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Table row styles */
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Table cell styles */
+    td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Hover effect for table rows */
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+
+    /* Image styles */
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
 </style>
 
 <body>
@@ -226,8 +269,8 @@ if ($stmt) {
             </div>
 
             <!-- View Products Container -->
-            <div id="viewProducts" class="products-container">
-            <h4 style="color:#922B21">View Products</h4>
+<div id="viewProducts" class="products-container">
+    <h4 style="color:#922B21">View Products</h4>
     <table>
         <tr>
             <th>Product Name</th>
@@ -236,12 +279,48 @@ if ($stmt) {
             <th>Price</th>
             <th>Category</th>
             <th>Subcategory</th>
+            <th>Image</th> <!-- New th for the product image -->
+            <th> </th>
         </tr>
-                <!-- Display your products here -->
-            </div>
-        </div>
-        <!-- You can add more sections here if needed -->
+        <!-- Fetch products from the database and display them in the table -->
+        <?php
+        include 'connect.php';
 
+        // Perform SQL query to fetch products
+        $sql = "SELECT p_name, description, qty, price, category_id, subcategory_id, image FROM tbl_products";
+        $result = mysqli_query($conn, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+            // Output data of each row
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>
+                        <td>" . $row['p_name'] . "</td>
+                        <td>" . $row['description'] . "</td>
+                        <td>" . $row['qty'] . "</td>
+                        <td>₹" . $row['price'] . "</td>
+                        <td>" . $row['category_id'] . "</td>
+                        <td>" . $row['subcategory_id'] . "</td>
+                        <td><img src='data:image/jpeg;base64," . base64_encode($row['image']) . "' width='100' height='100'></td> <!-- Display image -->
+                        <td>
+                            <form action='' method='post'>
+                                <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
+                                <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
+                            </form>
+                        </td>
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='7'>No products found</td></tr>";
+        }
+
+        // Close the database connection
+        mysqli_close($conn);
+        ?>
+    </table>
+</div>
+
+        <!-- You can add more sections here if needed -->
+</div>
         <script>
         // JavaScript for handling button clicks and showing/hiding tabs
         document.addEventListener("DOMContentLoaded", function () {

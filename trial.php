@@ -1,40 +1,72 @@
 <?php
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Include your database connection file
+    include "connect.php";
 
-session_start();
+    // Retrieve form data and sanitize it
+    $productName = mysqli_real_escape_string($conn, $_POST['productName']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+    $quantity = $_POST['quantity'];
+    $price = $_POST['price'];
+    $category_id = $_POST['category'];
 
-include 'connect.php';
-if(isset($_session['email'])){
-    header("location: guestindex.php");
-    exit();
+    // Determine the subcategory based on the selected category
+    $subcategory_id = null;
+    switch ($category_id) {
+        case '1':
+            $subcategory_id = $_POST['Subcategory1'];
+            break;
+        case '2':
+            $subcategory_id = $_POST['Subcategory2'];
+            break;
+        case '3':
+            $subcategory_id = $_POST['Subcategory3'];
+            break;
+        default:
+            // Handle default case if needed
+            break;
+    }
+
+// Handle file upload for the image
+$image = file_get_contents($_FILES['image']['tmp_name']);
+
+if ($image === false) {
+    echo "Error: Failed to read the image file.";
+    exit;
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve and sanitize form data
-    $productName = isset($_POST['productName']) ? mysqli_real_escape_string($conn, $_POST['productName']) : '';
-    $description = isset($_POST['description']) ? mysqli_real_escape_string($conn, $_POST['description']) : '';
-    $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 0;
-    $price = isset($_POST['price']) ? floatval($_POST['price']) : 0.0;
-    $categoryName = isset($_POST['category']) ? intval($_POST['category']) : 0; // Assuming category_id is an integer in the database
-    $subcategoryName = isset($_POST['subcategory']) ? intval($_POST['subcategory']) : 0; // Assuming subcategory_id is an integer in the database
-    $image = isset($_POST['image']) ? mysqli_real_escape_string($conn, $_POST['image']) : '';
+// Encode the image data to base64
+$image_base64 = base64_encode($image);
 
-    // Insert product into tbl_products with category and subcategory IDs
-    $insertProductQuery = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id) 
-                            VALUES ('$productName', '$description', '$quantity', '$price', '$categoryName', '$image', '$subcategoryName')";
-    
-    if (mysqli_query($conn, $insertProductQuery)) {
-        // Redirect to the same page after successful insertion
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
+// Prepare SQL statement with placeholders for the image
+$sql = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+// Prepare the statement
+$stmt = mysqli_prepare($conn, $sql);
+if ($stmt) {
+    // Bind parameters to the statement
+    mysqli_stmt_bind_param($stmt, "ssiiibs", $productName, $description, $quantity, $price, $category_id, $image, $subcategory_id);
+
+    // Execute the statement
+    if (mysqli_stmt_execute($stmt)) {
+        echo "<script>alert('Product added successfully.')</script>";
+        header("Location: adminproductrec.php");
+        exit; // Make sure to exit after redirection
     } else {
-        echo "Error: " . $insertProductQuery . "<br>" . mysqli_error($conn);
+        echo "<script>alert('Error: " . mysqli_stmt_error($stmt) . "')</script>";
     }
+
+    // Close the statement
+    mysqli_stmt_close($stmt);
+} else {
+    echo "Error: Unable to prepare statement: " . mysqli_error($conn);
+}
+    // Close database connection
+    mysqli_close($conn);
 }
 ?>
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -78,13 +110,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
 /* Add more styles as needed */
+
+/* Table styles */
+table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    /* Table header styles */
+    th {
+        background-color: #f2f2f2;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Table row styles */
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Table cell styles */
+    td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    /* Hover effect for table rows */
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+
+    /* Image styles */
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+    }
+
 </style>
 
 <body>
     <div class="sidebar">
         <div class="logo"></div>
         <ul class="menu">
-            <li class="active"><a href="#"><i class="fas fa-store"></i>
+            <li><a href="admin.php"><i class="fas fa-tachometer"></i>
+                    <span>Dashboard</span></a>
+            </li>
+            <li class="active"><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
             <li><a href="#"><i class="fas fa-lightbulb"></i>
@@ -93,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <li><a href="#"><i class="fas fa-clipboard-list"></i>
                     <span>Orders</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-users"></i>
+            <li><a href="adminuserrec.php"><i class="fas fa-users"></i>
                     <span>Users Record</span></a>
             </li>
             <li><a href="#"><i class="fas fa-question-circle"></i>
@@ -130,7 +203,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- Add Product Form Container -->
             <div id="addProductForm" class="form-container">
                 <h4 style="color:#922B21">Add Product</h4><br>
-                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
         <label for="productName">Product Name:</label>
         <input type="text" id="productName" name="productName" required><br><br>
 
@@ -151,10 +224,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <option value="3">Footwear</option>
         </select><br><br>
 
-        <!-- Subcategories for Women's Wear -->
+<!-- Subcategories for Women's Wear -->
 <div id="Subcategories1" class="subcategories" style="display: none;">
-    <label for="Subcategory">Subcategory:</label>
-    <select id="Subcategory" name="Subcategory">
+    <label for="Subcategory1">Subcategory:</label>
+    <select id="Subcategory1" name="Subcategory1">
         <option value="">Select Subcategory</option>
         <option value="1">Dresses</option>
         <option value="2">Co-ords Sets</option>
@@ -168,8 +241,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!-- Subcategories for Accessories -->
 <div id="Subcategories2" class="subcategories" style="display: none;">
-    <label for="Subcategory">Subcategory:</label>
-    <select id="Subcategory" name="Subcategory">
+    <label for="Subcategory2">Subcategory:</label>
+    <select id="Subcategory2" name="Subcategory2">
         <option value="">Select Subcategory</option>
         <option value="8">Jewellery</option>
         <option value="9">Bag</option>
@@ -178,13 +251,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!-- Subcategories for Footwear -->
 <div id="Subcategories3" class="subcategories" style="display: none;">
-    <label for="Subcategory">Subcategory:</label>
-    <select id="Subcategory" name="Subcategory">
+    <label for="Subcategory3">Subcategory:</label>
+    <select id="Subcategory3" name="Subcategory3">
         <option value="">Select Subcategory</option>
         <option value="10">Shoes</option>
         <option value="11">Sandals</option>
     </select><br><br>
 </div>
+
 
 
         <label for="image">Product Image:</label>
@@ -195,8 +269,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <!-- View Products Container -->
-            <div id="viewProducts" class="products-container">
-            <h4 style="color:#922B21">View Products</h4>
+<div id="viewProducts" class="products-container">
+    <h4 style="color:#922B21">View Products</h4>
     <table>
         <tr>
             <th>Product Name</th>
@@ -205,12 +279,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <th>Price</th>
             <th>Category</th>
             <th>Subcategory</th>
+            <th>Image</th> <!-- New th for the product image -->
         </tr>
-                <!-- Display your products here -->
-            </div>
-        </div>
-        <!-- You can add more sections here if needed -->
+        <!-- Fetch products from the database and display them in the table -->
+        <?php
+        include 'connect.php';
 
+        // Perform SQL query to fetch products
+        $sql = "SELECT p_name, description, qty, price, category_id, subcategory_id, image FROM tbl_products";
+        $result = mysqli_query($conn, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+            // Output data of each row
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>
+                        <td>" . $row['p_name'] . "</td>
+                        <td>" . $row['description'] . "</td>
+                        <td>" . $row['qty'] . "</td>
+                        <td>$" . $row['price'] . "</td>
+                        <td>" . $row['category_id'] . "</td>
+                        <td>" . $row['subcategory_id'] . "</td>
+                        <td><img src='data:image/jpeg;base64," . base64_encode($row['image']) . "' width='100' height='100'></td> <!-- Display image -->
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='7'>No products found</td></tr>";
+        }
+
+        // Close the database connection
+        mysqli_close($conn);
+        ?>
+    </table>
+</div>
+
+        <!-- You can add more sections here if needed -->
+</div>
         <script>
         // JavaScript for handling button clicks and showing/hiding tabs
         document.addEventListener("DOMContentLoaded", function () {
@@ -251,6 +354,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 document.getElementById('Subcategories3').style.display = 'block';
             }
         }
+
     </script>
     </div>
 </body>
