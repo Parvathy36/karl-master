@@ -111,42 +111,58 @@ if ($stmt) {
 
 /* Add more styles as needed */
 
-/* Table styles */
+/* Style the table */
 table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+    width: 100%;
+    border-collapse: collapse;
+}
 
-    /* Table header styles */
-    th {
-        background-color: #f2f2f2;
-        padding: 8px;
-        text-align: left;
-    }
+/* Style table header */
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 
-    /* Table row styles */
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
+/* Style table header */
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
 
-    /* Table cell styles */
-    td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+/* Style alternate table rows */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
 
-    /* Hover effect for table rows */
-    tr:hover {
-        background-color: #f2f2f2;
-    }
+/* Style the product image */
+td img {
+    display: block;
+    margin: 0 auto;
+}
 
-    /* Image styles */
-    .product-image {
-        max-width: 100px;
-        max-height: 100px;
-    }
+/* Style the buttons */
+button {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+button.btn-success {
+    background-color: #922B21;
+    color: white;
+}
+
+button.btn-danger {
+    background-color: #922B21;
+    color: white;
+}
+
+button.btn-success:hover,
+button.btn-danger:hover {
+    opacity: 0.8;
+}
+
 
 </style>
 
