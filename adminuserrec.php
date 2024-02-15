@@ -107,7 +107,7 @@
             <li><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-lightbulb"></i>
+            <li><a href="adminmanagetip.php"><i class="fas fa-lightbulb"></i>
                     <span>Manage Tips</span></a>
             </li>
             <li><a href="#"><i class="fas fa-clipboard-list"></i>
@@ -134,10 +134,7 @@
                 <h2>Dashboard</h2>
             </div>
             <div class="user--info">
-                <div class="search--box">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" placeholder="search">
-                </div>
+                
                 <img src="" alt="">
             </div>
         </div>

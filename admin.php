@@ -52,7 +52,7 @@
             <li><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-lightbulb"></i>
+            <li><a href="adminmanagetip.php"><i class="fas fa-lightbulb"></i>
                     <span>Manage Tips</span></a>
             </li>
             <li><a href="#"><i class="fas fa-clipboard-list"></i>

@@ -217,7 +217,7 @@ button.btn-danger:hover {
             <li class="active"><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-lightbulb"></i>
+            <li><a href="adminmanagetip.php"><i class="fas fa-lightbulb"></i>
                     <span>Manage Tips</span></a>
             </li>
             <li><a href="#"><i class="fas fa-clipboard-list"></i>
@@ -378,7 +378,6 @@ button.btn-danger:hover {
     </table>
 </div>
 
-<!-- Add category form -->
 
 <!-- Add category form -->
 <div id="addCategoryForm" class="form-container" style="display: none;">
@@ -388,69 +387,9 @@ button.btn-danger:hover {
         <input type="text" id="categoryName" name="categoryName" required><br>
         <div id="categoryError" style="color: #922B21; font-size: 12px; font-weight: bold; font-family: sans-serif;"></div><br> <!-- Container for error messages -->
         <input type="submit" value="Add" style="width:120px; height:50px">
+        <a href="#" align="right">view category list</a>
     </form>
 </div>
-
-<script>
-    function validateCategoryForm() {
-        var categoryName = document.getElementById('categoryName').value.trim();
-        var categoryError = document.getElementById('categoryError');
-        categoryError.innerHTML = ''; // Clear previous error messages
-
-        // Check if the categoryName is empty
-        if (categoryName === '') {
-            categoryError.innerHTML = '*Category Name cannot be empty.';
-            return false;
-        }
-
-        // Check for repeated blank spaces
-        if (/\s{2,}/.test(categoryName)) {
-            categoryError.innerHTML = '*Repeated blank spaces are not allowed.';
-            return false;
-        }
-
-        // Check if the categoryName contains numbers or special characters other than '-'
-        if (/[^a-zA-Z-\s]/.test(categoryName)) {
-            categoryError.innerHTML = '*Please enter valid category name.';
-            return false;
-        }
-
-        return true; // Form is valid
-    }
-</script>
-
-<?php
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Include your database connection file
-    require_once "connect.php";
-
-    // Retrieve form data and perform basic input validation
-    $categoryName = $_POST['categoryName'] ?? ''; // Using the null coalescing operator to handle undefined index
-    $categoryName = trim($categoryName); // Remove leading/trailing whitespace
-
-    if (!empty($categoryName)) {
-        // Prepare SQL statement (using prepared statement to prevent SQL injection)
-        $stmt = $conn->prepare("INSERT INTO tbl_category (category_name) VALUES (?)");
-
-        // Bind parameters and execute the statement
-        $stmt->bind_param("s", $categoryName); // "s" indicates the parameter type (string)
-        if ($stmt->execute()) {
-            echo "New record created successfully";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
-
-        // Close the statement
-        $stmt->close();
-    } else {
-        echo "Category name is required";
-    }
-
-    // Close the connection
-    $conn->close();
-}
-?>
 
 <!-- Add subcategory form -->
 <div id="addSubcategoryForm" class="form-container" style="display: none;">
@@ -472,72 +411,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" value="Add" style="width:120px; height:50px">
     </form>
 </div>
-
-<?php
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Include your database connection file
-    require_once "connect.php";
-
-    // Sanitize and validate form data
-    $subcategoryName = $_POST['subcategoryName'];
-    $category = $_POST['category'];
-
-    // Perform SQL insert
-    $sql = "INSERT INTO tbl_subcate (subcategory_name, category_id) VALUES (?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "si", $subcategoryName, $category);
-
-    if (mysqli_stmt_execute($stmt)) {
-        // Insertion successful
-        echo "<script>alert('Subcategory added successfully.')</script>";
-    } else {
-        // Insertion failed
-        echo "<script>alert('Error: " . mysqli_error($conn) . "')</script>";
-    }
-
-    // Close statement and connection
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
-}
-?>
-
-<script>
-    function validateSubcategoryForm() {
-        var category = document.getElementById('category').value;
-        var subcategoryName = document.getElementById('subcategoryName').value.trim();
-        var categoryError = document.getElementById('categoryError');
-        var subcategoryNameError = document.getElementById('subcategoryNameError');
-        categoryError.innerHTML = '';
-        subcategoryNameError.innerHTML = '';
-
-        // Check if a category is selected
-        if (category === '') {
-            categoryError.innerHTML = '*Please select a category.';
-            return false;
-        }
-
-        // Check if the subcategoryName is empty
-        if (subcategoryName === '') {
-            subcategoryNameError.innerHTML = '*Subcategory Name cannot be empty.';
-            return false;
-        }
-
-        // Check for repeated blank spaces
-        if (/\s{2,}/.test(subcategoryName)) {
-            subcategoryNameError.innerHTML = '*Repeated blank spaces are not allowed.';
-            return false;
-        }
-
-        // Check if the subcategoryName contains numbers or special characters other than '-'
-        if (/[^a-zA-Z-\s]/.test(subcategoryName)) {
-            subcategoryNameError.innerHTML = '*Only alphabets, blank spaces, and "-" are allowed.';
-            return false;
-        }
-
-        return true; // Form is valid
-    }
-</script>
 
 
 <script>
@@ -591,48 +464,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Add more JavaScript functionality here, such as form submission handling
 
-        // Function to toggle subcategories based on the selected category
         function toggleSubcategories() {
             var category = document.getElementById('category').value;
             var subcategories = document.getElementsByClassName('subcategories');
 
-            // Hide all subcategories initially
-            for (var i = 0; i < subcategories.length; i++) {
-                subcategories[i].style.display = 'none';
-            }
-
-            // Show subcategories based on the selected main category
-            document.getElementById('Subcategories' + category).style.display = 'block';
+        // Hide all subcategories initially
+        for (var i = 0; i < subcategories.length; i++) {
+            subcategories[i].style.display = 'none';
         }
 
-        // Initialize event listeners for form validation
+        // Show subcategories based on the selected main category
+        switch (category) {
+            case '1':
+                document.getElementById('Subcategories1').style.display = 'block';
+                break;
+            case '2':
+                document.getElementById('Subcategories2').style.display = 'block';
+                break;
+            case '3':
+                document.getElementById('Subcategories3').style.display = 'block';
+                break;
+            default:
+                break;
+        }
+        }
+        // Add an event listener to the category select element to trigger the toggleSubcategories function
+        document.getElementById('category').addEventListener('change', toggleSubcategories);
+
         document.addEventListener("DOMContentLoaded", function () {
-            var productNameInput = document.getElementById("productName");
-            var descriptionInput = document.getElementById("description");
-            var quantityInput = document.getElementById("quantity");
-            var priceInput = document.getElementById("price");
-            var categoryInput = document.getElementById("category");
+    var productNameInput = document.getElementById("productName");
+    var descriptionInput = document.getElementById("description");
+    var quantityInput = document.getElementById("quantity");
+    var priceInput = document.getElementById("price");
+    var categoryInput = document.getElementById("category");
+    var imageInput = document.getElementById("image");
 
-            productNameInput.addEventListener("blur", function () {
-                validateField(productNameInput, validateProductNameFormat, "*Please enter a valid product name.");
-            });
+    productNameInput.addEventListener("blur", function () {
+        validateField(productNameInput, validateProductNameFormat, "*Please enter a valid product name.");
+    });
 
-            descriptionInput.addEventListener("blur", function () {
-                validateField(descriptionInput, validateDescriptionFormat, "*Please enter a valid description.");
-            });
+    descriptionInput.addEventListener("blur", function () {
+        validateField(descriptionInput, validateDescriptionFormat, "*Please enter a valid description.");
+    });
 
-            quantityInput.addEventListener("blur", function () {
-                validateField(quantityInput, validateQuantityFormat, "*Please enter a valid quantity.");
-            });
+    quantityInput.addEventListener("blur", function () {
+        validateField(quantityInput, validateQuantityFormat, "*Please enter a valid quantity.");
+    });
 
-            priceInput.addEventListener("blur", function () {
-                validateField(priceInput, validatePriceFormat, "*Please enter a valid price.");
-            });
+    priceInput.addEventListener("blur", function () {
+        validateField(priceInput, validatePriceFormat, "*Please enter a valid price.");
+    });
 
-            categoryInput.addEventListener("change", function () {
-                validateField(categoryInput, validateCategoryFormat, "*Please select a category.");
-            });
-        });
+    categoryInput.addEventListener("change", function () {
+        validateField(categoryInput, validateCategoryFormat, "*Please select a category.");
+    });
+
+    imageInput.addEventListener("change", function () {
+        validateImage(imageInput);
+    });
+});
 
         // Function to validate a field
         function validateField(inputField, validationFunction, errorMessage) {
@@ -644,52 +534,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        function validateImage(imageInput) {
+    var file = imageInput.files[0];
+    var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Regular expression for allowed image extensions
+
+    if (!file) {
+        displayErrorMessage("*Please select an image.", imageInput);
+        return;
+    }
+
+    if (!allowedExtensions.test(file.name)) {
+        displayErrorMessage("*Supported image formats: JPEG, JPG, PNG", imageInput);
+    } else {
+        clearErrorMessage(imageInput);
+    }
+}
+
         // Validation functions
-        function validateProductNameFormat(productName) {
-            return /^[a-zA-Z\s]*$/.test(productName) && !/\s{2,}/.test(productName);
-        }
+function validateProductNameFormat(productName) {
+    return /^[a-zA-Z\s]*$/.test(productName) && !/\s{2,}/.test(productName);
+}
 
-        function validateDescriptionFormat(description) {
-            return description.trim() !== '' && !/\s{2,}/.test(description);
-        }
+function validateDescriptionFormat(description) {
+    return description.trim() !== '' && !/\s{2,}/.test(description);
+}
 
-        function validateQuantityFormat(quantity) {
-        return !isNaN(quantity) && parseInt(quantity) > 0;
-        }   
+function validateQuantityFormat(quantity) {
+    return Number.isInteger(parseFloat(quantity)) && parseInt(quantity) > 0;
+}           
 
 
-        function validatePriceFormat(price) {
-            return !isNaN(price) && parseFloat(price) > 0;
-        }
+function validatePriceFormat(price) {
+    return !isNaN(price) && parseFloat(price) > 0;
+}
 
-        function validateCategoryFormat(category) {
-            return category !== "";
-        }
+function validateCategoryFormat(category) {
+    return category !== "";
+}
 
         // Function to display error messages
-        function displayErrorMessage(message, inputField) {
-            clearErrorMessage(inputField); // Clear existing errors
-            var errorMessageElement = document.createElement('div');
-            errorMessageElement.classList.add('error-message');
-            errorMessageElement.textContent = message;
+function displayErrorMessage(message, inputField) {
+    clearErrorMessage(inputField); // Clear existing errors
+    var errorMessageElement = document.createElement('div');
+    errorMessageElement.classList.add('error-message');
+    errorMessageElement.textContent = message;
 
             // Apply styles to the error message element
-            errorMessageElement.style.color = '#922B21'; // Change color to red
-            errorMessageElement.style.fontWeight = 'bold'; // Set font weight to bold
-            errorMessageElement.style.fontSize = '13px'; // Adjust font size
-            errorMessageElement.style.fontFamily = 'Sans Serif'; // Change font-family
+    errorMessageElement.style.color = '#922B21'; // Change color to red
+    errorMessageElement.style.fontWeight = 'bold'; // Set font weight to bold
+    errorMessageElement.style.fontSize = '13px'; // Adjust font size
+    errorMessageElement.style.fontFamily = 'Sans Serif'; // Change font-family
 
-            inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
-        }
+    inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
+}
 
         // Function to clear error messages
-        function clearErrorMessage(inputField) {
-            var errorMessage = inputField.parentNode.querySelector('.error-message');
-            if (errorMessage) {
-                errorMessage.remove();
-            }
-        }
-    })();
+function clearErrorMessage(inputField) {
+    var errorMessage = inputField.parentNode.querySelector('.error-message');
+    if (errorMessage) {
+        errorMessage.remove();
+    }
+}
+})();
 
     
 </script>
