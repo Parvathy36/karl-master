@@ -29,10 +29,22 @@ body{
     width: 240px;
     transition: 0.5s;
 }
-.logo
-{
-    height: 80px;
-    padding: 16px;
+
+.logo img{
+    /* Set initial width and height for the image */
+    margin-top: 20px;
+    
+    width: 100%;
+    height: 45px;
+    transition: transform 0.3s ease-in-out; /* Add transition for smooth effect */
+}
+
+/* Define hover effect */
+.logo-img:hover {
+    margin-top: 20px;
+    width: 100%;
+    height: 50px;
+    transform: scale(1.1); /* Scale the image on hover */
 }
 .menu
 {
@@ -74,7 +86,7 @@ body{
 {
     position: relative;
     background: #ebe9e9;
-    width:100%;
+    width: 100%;
     padding: 1rem;
 }
 
@@ -90,20 +102,19 @@ body{
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    background: #fff;
+    background: #922B21;
     border-radius: 10px;
     padding: 10px 2rem;
     margin-bottom: 1rem;
-}
-.header--title{
-    color:#922B21 
 }
 .user--info{
     display:flex;
     align-items: center;
     gap: 1rem;
 }
-
+.header--title{
+    color: black;
+}
 .search--box{
     background: rgb(237 237 237);
     border-radius: 15px;
@@ -130,7 +141,7 @@ body{
 }
 
 h2 {
-    color: #333;
+    color: white;
 }
 
 form {
