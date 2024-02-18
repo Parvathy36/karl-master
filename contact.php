@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+if (isset($_SESSION['username'])) {
+    $user = $_SESSION['username'];
+} else {
+    // Redirect the user to the login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -190,7 +201,7 @@
                                             <li class="nav-item"><a class="nav-link" href="blog.php">Blog</a></li>
                                             <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
                                             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-                                            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Account</a>
+                                            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                      <a class="dropdown-item" href="#">Profile</a>
                                                      <a class="dropdown-item" href="#">Wishlist</a>

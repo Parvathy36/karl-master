@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+if (isset($_SESSION['username'])) {
+    $user = $_SESSION['username'];
+} else {
+    // Redirect the user to the login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -150,8 +161,8 @@ button.btn-danger:hover {
                 <h2>Dashboard</h2>
             </div>
             <div class="user--info">
+                <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
                 
-                <img src="" alt="">
             </div>
         </div>
         

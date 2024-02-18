@@ -1,9 +1,8 @@
 <?php
 session_start();
-session_unset();
+$_SESSION = array();
 session_destroy();
-
+header("location: login.php");
 // Redirect to the login page or any other page after logout
-header("location: guestindex.php");
-exit;
+exit();
 ?>

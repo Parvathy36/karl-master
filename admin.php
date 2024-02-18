@@ -1,4 +1,14 @@
+<?php
+session_start();
 
+if (isset($_SESSION['username'])) {
+    $user = $_SESSION['username'];
+} else {
+    // Redirect the user to the login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,7 +71,19 @@
     color: #922D32;
     font-weight: bold;
     font-size: 25px;
-    font-family: Garamond, Consolas;
+    font-family: Garamond, "Consolas";
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.statistic-box p {
+    font-family: Garamond;
+    font-weight: bold;
+    font-size: 60px; 
+    color: #922D32; 
+    margin-top: 30px; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #333;
 }
 
 </style>
@@ -106,26 +128,60 @@
             </div>
             <div class="user--info">
                 
-                <img src="" alt="">
+            <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
             </div>
         </div>
         
         <!-- You can add more sections here if needed -->
         <div class="main-content">
-            <div class="statistic-box">
-                <h3>Total Users</h3>
-                <p></p>
-            </div>
-            <div class="statistic-box">
-                <h3>Total Products</h3>
-                <p></p>
-            </div>
+        <?php
+// Include the connect.php file
+include 'connect.php';
+
+// SQL query to count users where role = 1
+$sql = "SELECT COUNT(*) as user_count FROM tbl_register WHERE role = 1";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Output data of each row
+    while($row = $result->fetch_assoc()) {
+        $userCount = $row["user_count"];
+        // Output the user count within the h3 element
+        echo "<div class='statistic-box'>";
+        echo "<h3>Total Users</h3>";
+        echo "<p>" . $userCount . "</p>";
+        echo "</div>";
+    }
+} else {
+    echo "0 results";
+}
+$conn->close();
+?>
+<?php
+// Include the connect.php file
+include 'connect.php';
+
+// SQL query to count products
+$sql = "SELECT COUNT(*) as product_count FROM tbl_products";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Output data of each row
+    while($row = $result->fetch_assoc()) {
+        $productCount = $row["product_count"];
+        // Output the product count within the h3 element
+        echo "<div class='statistic-box'>";
+        echo "<h3>Total Products</h3>";
+        echo "<p>" . $productCount . "</p>";
+        echo "</div>";
+    }
+} else {
+    echo "0 results";
+}
+$conn->close();
+?>
             <div class="statistic-box">
                 <h3>Total Orders</h3>
-                <p></p>
-            </div>
-            <div class="statistic-box">
-                <h3>Total Products</h3>
                 <p></p>
             </div>
         </div>

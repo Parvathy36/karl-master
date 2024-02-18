@@ -1,4 +1,15 @@
 <?php
+session_start();
+
+if (isset($_SESSION['username'])) {
+    $user = $_SESSION['username'];
+} else {
+    // Redirect the user to the login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php
 // Include your database connection file
 require_once "connect.php";
 
@@ -220,7 +231,7 @@ button.btn-danger:hover {
             </div>
             <div class="user--info">
                 
-                <img src="" alt="">
+            <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
             </div>
         </div>
         <div class="section1">

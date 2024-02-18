@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+
 include('connect.php');
 
 if (isset($_POST['sub'])) {
@@ -11,17 +13,18 @@ if (isset($_POST['sub'])) {
     $hashedPassword = md5($password);
 
     // Prepare SQL statement using prepared statement
-    $sql = "SELECT uid, role, password FROM tbl_register WHERE email = ?";
+    $sql = "SELECT uid, role, password, username FROM tbl_register WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    $stmt->bind_result($uid, $role, $storedPassword);
+    $stmt->bind_result($uid, $role, $storedPassword, $username);
 
     if ($stmt->fetch()) {
         // Compare the stored MD5 hashed password with the user-entered password
         if ($hashedPassword === $storedPassword) {
             // Password is correct
-            $_SESSION['id'] = $uid;
+            $_SESSION['uid'] = $uid;
+            $_SESSION['username'] = $username;
             // Redirect based on role
             if ($role == 0) {
                 header("location: admin.php");

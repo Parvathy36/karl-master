@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['customer']['password'];
 
     if (empty($username) || empty($email) || empty($password)) {
-        echo "All fields are required";
+        header("Location: register.php"); 
         exit();
     }
 
@@ -327,18 +327,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     document.addEventListener("DOMContentLoaded", function () {
         var form = document.getElementById("CustomerLoginForm");
 
-        // Select all input fields
-        var usernameInput = document.getElementById("name");
-        var emailInput = document.getElementById("CustomerEmail");
-        var passwordInput = document.getElementById("CustomerPassword");
-        var confirmPasswordInput = document.getElementById("CustomerConfirmPassword");
+        form.addEventListener("submit", function(event) {
+            // Select all input fields
+            var usernameInput = document.getElementById("name");
+            var emailInput = document.getElementById("CustomerEmail");
+            var passwordInput = document.getElementById("CustomerPassword");
+            var confirmPasswordInput = document.getElementById("CustomerConfirmPassword");
 
-        // Add event listeners to input fields
+            // Check if any of the fields are empty
+            if (usernameInput.value.trim() === '' || 
+                emailInput.value.trim() === '' || 
+                passwordInput.value.trim() === '' || 
+                confirmPasswordInput.value.trim() === '') {
+                event.preventDefault(); // Prevent form submission
+                alert("Please fill in all the fields."); // Display an alert message
+            }
+        });
+
+        // Add blur event listeners to validate individual fields
         usernameInput.addEventListener("blur", validateUsername);
         emailInput.addEventListener("blur", validateEmail);
         passwordInput.addEventListener("blur", validatePassword);
         confirmPasswordInput.addEventListener("blur", validateConfirmPassword);
 
+        // Validation functions for individual fields
         function validateUsername() {
             var username = usernameInput.value.trim();
             if (!validateUsernameFormat(username)) {
@@ -376,6 +388,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        // Regular expressions for format validation
         function validateUsernameFormat(username) {
             return /^[a-zA-Z_]+$/.test(username);
         }
@@ -389,16 +402,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         function displayErrorMessage(message, inputField) {
-            clearErrorMessage(inputField); // Clear existing errors
-            var errorMessageElement = document.createElement('div');
-            errorMessageElement.classList.add('error-message');
-            errorMessageElement.style.color = 'black'; // Set color to black
-            errorMessageElement.style.fontStyle = 'Sans Serif'; // Set font style to italic
-            errorMessageElement.style.fontWeight = 'bold'; // Set font weight to bold
-            errorMessageElement.style.fontSize = '12px'; // Set font size
-            errorMessageElement.textContent = message;
-            inputField.parentNode.appendChild(errorMessageElement);
-        }
+        clearErrorMessage(inputField); // Clear existing errors
+        var errorMessageElement = document.createElement('div');
+        errorMessageElement.classList.add('error-message');
+        errorMessageElement.style.color = 'black'; // Set color to red
+        errorMessageElement.style.fontWeight = 'bold'; // Set font weight to bold
+        errorMessageElement.style.fontSize = '13px'; // Adjust font size
+        errorMessageElement.style.fontFamily = 'Sans Serif'; // Change font-family
+        errorMessageElement.textContent = message;
+        inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
+    }
+
 
         function clearErrorMessage(inputField) {
             var errorMessage = inputField.parentNode.querySelector('.error-message');
@@ -408,6 +422,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     });
 </script>
+
+
 
 </body>
 
