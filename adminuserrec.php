@@ -44,62 +44,78 @@
 
     /* Table styles */
     table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    /* Header row styles */
-    th {
-        background-color: #f2f2f2;
-        font-weight: bold;
-        text-align: left;
-        padding: 10px;
-        border: 1px solid #dddddd;
-    }
-    
-    /* Data row styles */
-    td {
-        padding: 10px;
-        border: 1px solid #dddddd;
-    }
-    
-    /* Alternating row colors */
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    
-    /* Button styles */
-    .btn {
-        padding: 8px 16px;
-        border: none;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-    }
-    
-    /* Success button style */
-    .btn-success {
-        background-color: #BA4A00;
-        color: white;
-    }
-    
-    /* Danger button style */
-    .btn-danger {
-        background-color: #922B21;
-        color: white;
-    }
-    
-    /* Button hover effect */
-    .btn:hover {
-        background-color: #BA4A00;
-    }
+    border-collapse: collapse;
+    width: 60%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style table header and cells */
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+/* Style table header */
+th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Style alternate table rows */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Style the product image */
+td img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+/* Style the buttons */
+button {
+    padding: 8px 16px;
+    border: none;
+    width: 100px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Style success button */
+button.btn-success {
+    background-color: #922B21;
+    color: white;
+}
+
+/* Style danger button */
+button.btn-danger {
+    background-color: #922B21;
+    color: white;
+}
+
+/* Hover effect for buttons */
+button.btn-success:hover,
+button.btn-danger:hover {
+    background-color: #1e7e34; /* Darken success button */
+    color: #fff; /* Change color to white on hover */
+}
+
 
 
 </style>
 
 <body>
     <div class="sidebar">
-        <div class="logo"></div>
+        <div class="logo">
+            <img src="img/core-img/aura_.png" alt="">
+        </div>
         <ul class="menu">
             <li><a href="admin.php"><i class="fas fa-tachometer"></i>
                     <span>Dashboard</span></a>
@@ -142,18 +158,14 @@
         <div class="container-fluid pt-4 px-4">
     <div class="bg-light text-center rounded p-4">
         
-        <div class="table-responsive">
+        <div class="table-responsive"><br>
+            <h3 style="color:#922B21; margin-left:10px;">User Records</h3><br>
             <table class="table text-start align-middle table-bordered table-hover mb-0">
                 <thead>
                     <tr class="text-dark">
                         <th scope="col"></th>
                         <th scope="col">Username</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Zipcode</th>
-                        <th scope="col">State</th>
-                        <th scope="col">City</th>
-                        <th scope="col">Reg Date</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -167,17 +179,11 @@
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>
-                                    <td><input class='form-check-input' type='checkbox'></td>
+                                    <td>" . $row['uid'] . "</td>
                                     <td>" . $row['username'] . "</td>
                                     <td>" . $row['email'] . "</td>
-                                    <td> </td>
-                                    <td> </td>
-                                    <td> </td>
-                                    <td> </td>
-                                    <td> </td>
                                     <td>
                                         <form action='' method='post'>
-                                            <input type='hidden' name='username' value='" . $row['email'] . "'>
                                             <button type='submit' name='act' class='btn btn-sm btn-success'>Approve</button><br><br>
                                             <button type='submit' name='del' class='btn btn-sm btn-danger'>Reject</button>
                                         </form>

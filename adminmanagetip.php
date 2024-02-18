@@ -1,66 +1,41 @@
 <?php
+// Include your database connection file
+require_once "connect.php";
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Include your database connection file
-    require_once "connect.php";
-
     // Define variables and initialize them
-    $productName = $description = $image_name = $subcategory_id = "";
-    $quantity = $price = $category_id = 0;
+    $tipdescription = $image_name = "";
 
     // Sanitize and validate form data
-    if (isset($_POST['productName'])) {
-        $productName = mysqli_real_escape_string($conn, $_POST['productName']);
-    }
-    if (isset($_POST['description'])) {
-        $description = mysqli_real_escape_string($conn, $_POST['description']);
-    }
-    if (isset($_POST['quantity']) && isset($_POST['price']) && isset($_POST['category'])) {
-        $quantity = (int)$_POST['quantity'];
-        $price = (float)$_POST['price'];
-        $category_id = (int)$_POST['category'];
-    }
-
-    // Determine the subcategory based on the selected category
-    switch ($category_id) {
-        case 1:
-        case 2:
-        case 3:
-            $subcat_key = 'Subcategory'.$category_id;
-            if(isset($_POST[$subcat_key])){
-                $subcategory_id = (int)$_POST[$subcat_key];
-            }
-            break;
-        default:
-            // Handle default case if needed
-            break;
+    if (isset($_POST['tipdescription'])) {
+        $tipdescription = mysqli_real_escape_string($conn, $_POST['tipdescription']);
     }
 
     // Handle file upload for the image
-    if(isset($_FILES['image']['name'])){
+    if (isset($_FILES['image']['name'])) {
         $image_name = $_FILES['image']['name'];
-        $target_dir = "img/product-img/";
+        $target_dir = "img/tip-img/";
         $target_file = $target_dir . basename($image_name);
     }
 
     // Prepare SQL statement with placeholders for the image
-    $sql = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tbl_tip (image, tipdescription) VALUES (?, ?)";
 
     // Prepare the statement
     $stmt = mysqli_prepare($conn, $sql);
     if ($stmt) {
         // Bind parameters to the statement
-        mysqli_stmt_bind_param($stmt, "ssiiisi", $productName, $description, $quantity, $price, $category_id, $image_name, $subcategory_id);
+        mysqli_stmt_bind_param($stmt, "ss", $image_name, $tipdescription);
 
         // Execute the statement
         if (mysqli_stmt_execute($stmt)) {
             echo "<script>alert('Product added successfully.')</script>";
-            header("Location: adminproductrec.php");
+            header("Location: adminmanagetip.php");
             exit; // Make sure to exit after redirection
         } else {
             echo "<script>alert('Error: " . mysqli_stmt_error($stmt) . "')</script>";
-        }                                                                                                                                                                                                                                                                                                       
+        }
 
         // Close the statement
         mysqli_stmt_close($stmt);
@@ -249,7 +224,7 @@ button.btn-danger:hover {
             </div>
         </div>
         <div class="section1">
-            <h3 style="color: #696969; font-size:20px;">Manage Products</h3>
+            <h3 style="color: #696969; font-size:20px;">Manage Style Tip</h3>
             <br>
             <button id="addBtn">Add style tips</button>
             <button id="viewBtn">View tips</button>
@@ -257,40 +232,61 @@ button.btn-danger:hover {
 
             <!-- Add Product Form Container -->
             <div id="addstyletipForm" class="form-container">
+                <!-- Add style tips form -->
                 <h4 style="color:#922B21">Add Style Tips</h4><br>
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" id="AddstyletipForm" method="POST" enctype="multipart/form-data">
-        <label for="image">Product Image:</label>
-        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+                    <label for="image">Product Image:</label>
+                    <input type="file" id="image" name="image" accept="image/*" required><br><br>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required></textarea><br><br>
+                    <label for="tipdescription">Tip:</label>
+                    <textarea id="tipdescription" name="tipdescription" required></textarea><br><br>
 
-        <input type="submit" value="Add" style="width:120px; height:50px">
-    </form>
+                    <input type="submit" value="Add" style="width:120px; height:50px">
+                </form>
             </div>
 
             <!-- View Products Container -->
-<div id="viewstyletip" class="styletip-container" style="display:none;">
-    <h4 style="color:#922B21">View Style Tips</h4><br>
-    
-    <table>
-        <tr>
-            <th>Product Image</th>
-            <th>Description</th>
-            <th> </th>
-        </tr>
-        <!-- Fetch products from the database and display them in the table -->
-       
-    </table>
-</div>
+            <div id="viewstyletip" class="form-container" style="display:none;">
+                <!-- View style tips container -->
+                <h4 style="color:#922B21">View Style Tips</h4><br>
+                <table>
+                    <tr>
+                        <th>Sl no.</th>
+                        <th>Product Image</th>
+                        <th>Tip</th>
+                        <th> </th>
+                    </tr>
+                    <!-- Display style tips from the database -->
+                    <?php
+                    $sql = "SELECT * FROM tbl_tip";
+                    $result = mysqli_query($conn, $sql);
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>
+                                    <td>" . $row['tip_id'] . "</td>
+                                    <td><img src='img/tip-img/" . $row['image'] . "' alt='Product Image' width='100'></td>
+                                    <td>" . $row['tipdescription'] . "</td>
+                                    <td>
+                                        <form action='' method='post'>
+                                            <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
+                                            <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
+                                        </form>
+                                    </td>
+                                </tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='4'>No style tip found</td></tr>";
+                    }
+                    ?>
+                </table>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // JavaScript code
 
-
-
-<script>
-    // JavaScript code
-
-    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
             // Select DOM elements
             const addBtn = document.getElementById('addBtn');
             const viewBtn = document.getElementById('viewBtn');
@@ -316,14 +312,8 @@ button.btn-danger:hover {
         });
 
         // Add more JavaScript functionality here, such as form submission handling
+    </script>
 
-    
-</script>
-
-
-
-    
-    </div>
 </body>
 
 </html>
