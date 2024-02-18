@@ -270,7 +270,7 @@ button.btn-danger:hover {
             </div>
 
             <!-- View Products Container -->
-<div id="viewstyletip" class="styletip-container">
+<div id="viewstyletip" class="styletip-container" style="display:none;">
     <h4 style="color:#922B21">View Style Tips</h4><br>
     
     <table>

@@ -11,28 +11,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+    // Sanitize inputs
     $username = mysqli_real_escape_string($conn, $username);
     $email = mysqli_real_escape_string($conn, $email);
+    $hashedPassword = md5($password); // Convert the password to MD5 hash
 
-    // Remove the password hashing
-    // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
+    // Prepare the SQL statement
     $sql = "INSERT INTO tbl_register (username, email, password) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $username, $email, $password); // Bind the password directly
 
-    if ($stmt->execute()) {
-        header("Location: login.php");
-        exit();
+    if ($stmt) {
+        // Bind parameters and execute the statement
+        $stmt->bind_param("sss", $username, $email, $hashedPassword);
+        if ($stmt->execute()) {
+            header("Location: login.php");
+            exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        // Close the statement
+        $stmt->close();
     } else {
-        echo "Error: " . $conn->error;
+        echo "Error in preparing statement: " . $conn->error;
     }
 
-    $stmt->close();
+    // Close the connection
     $conn->close();
-    
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

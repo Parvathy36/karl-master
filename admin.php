@@ -44,7 +44,9 @@
 
 <body>
     <div class="sidebar">
-        <div class="logo"></div>
+        <div class="logo">
+            <img src="img/core-img/aura_.png" alt="">
+        </div>
         <ul class="menu">
             <li class="active"><a href="admin.php"><i class="fas fa-tachometer"></i>
                     <span>Dashboard</span></a>
@@ -79,10 +81,7 @@
                 <h2>Dashboard</h2>
             </div>
             <div class="user--info">
-                <div class="search--box">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" placeholder="search">
-                </div>
+                
                 <img src="" alt="">
             </div>
         </div>

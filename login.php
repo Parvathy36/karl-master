@@ -2,46 +2,53 @@
 session_start();
 include('connect.php');
 
-if (isset($_POST['sub'])) { 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+if (isset($_POST['sub'])) {
+    // Sanitize inputs
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
-    // Use prepared statements to prevent SQL injection
-    $sql = "SELECT uid, role FROM tbl_register WHERE email='$email' AND password='$password'";
-    
-   $result=$conn->query($sql);
+    // Hash the password using MD5 algorithm
+    $hashedPassword = md5($password);
 
-   if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
+    // Prepare SQL statement using prepared statement
+    $sql = "SELECT uid, role, password FROM tbl_register WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($uid, $role, $storedPassword);
 
-    
-    echo "Role from database: " . $row['role']; // Debugging output
-    if ($row['role'] == 0) {
-        $_SESSION['id'] = $row['uid'];
-    echo "<script>alert('login 1')</script>";
-        
-        header("location: admin.php");
-        exit();
-    } else if ($row['role'] == 1) {
-    echo "<script>alert('login 2')</script>";
-
-        $_SESSION['id'] = $row['uid'];
-      
-        header("location: index.php");
-        exit();
+    if ($stmt->fetch()) {
+        // Compare the stored MD5 hashed password with the user-entered password
+        if ($hashedPassword === $storedPassword) {
+            // Password is correct
+            $_SESSION['id'] = $uid;
+            // Redirect based on role
+            if ($role == 0) {
+                header("location: admin.php");
+                exit();
+            } elseif ($role == 1) {
+                header("location: index.php");
+                exit();
+            } else {
+                echo "Unknown role"; // Debugging output
+            }
+        } else {
+            // Invalid password
+            echo "<script>alert('Invalid password');</script>";
+        }
+    } else {
+        // Invalid user
+        echo "<script>alert('Invalid user');</script>";
     }
-    else {
-        echo "No rows returned from the database"; // Debugging output
-    }
-} 
-else{ echo"<script>alert('invalid user');</script>";
-}
 
-    
-    
-
+    $stmt->close();
+    $conn->close();
 }
 ?>
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
