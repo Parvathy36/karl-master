@@ -64,7 +64,7 @@ if (isset($_POST['sub'])) {
     <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <!-- Title  -->
-    <title>Karl - Fashion Ecommerce Template | Home</title>
+    <title> Aura</title>
 
     <!-- Favicon  -->
     <link rel="icon" href="img/core-img/favicon.ico">
