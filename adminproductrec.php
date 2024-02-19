@@ -706,6 +706,13 @@ mysqli_close($conn);
         document.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("AddProductForm");
 
+    var productNameInput = document.getElementById("productName");
+        var descriptionInput = document.getElementById("description");
+        var quantityInput = document.getElementById("quantity");
+        var priceInput = document.getElementById("price");
+        var categoryInput = document.getElementById("category");
+        var imageInput = document.getElementById("image");
+
     form.addEventListener("submit", function (event) {
         // Select all input fields
         var productNameInput = document.getElementById("productName");
@@ -841,19 +848,17 @@ mysqli_close($conn);
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Select input fields for category form
+    
     var categoryNameInput = document.getElementById("categoryName");
 
-    // Select input fields for subcategory form
     var category1Input = document.getElementById("category1");
     var subcategoryNameInput = document.getElementById("subcategoryName");
 
-    // Add event listeners to input fields in the category form
+  
     categoryNameInput.addEventListener("blur", function () {
         validateName(categoryNameInput, "*Invalid category name format.");
     });
 
-    // Add event listeners to input fields in the subcategory form
     category1Input.addEventListener("change", function () {
         validateCategory1(category1Input);
     });
@@ -884,11 +889,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function displayErrorMessage(message, inputField) {
-        clearErrorMessage(inputField); // Clear existing errors
+        clearErrorMessage(inputField); 
         var errorMessageElement = document.createElement('div');
         errorMessageElement.classList.add('error-message');
-        errorMessageElement.style.color = '#922B21'; // Set color to red
-        errorMessageElement.style.fontWeight = 'bold'; // Set font weight to bold
+        errorMessageElement.style.color = '#922B21'; 
+        errorMessageElement.style.fontWeight = 'bold'; 
         errorMessageElement.style.fontSize = '13px'; // Adjust font size
         errorMessageElement.style.fontFamily = 'Sans Serif'; // Change font-family
         errorMessageElement.textContent = message;

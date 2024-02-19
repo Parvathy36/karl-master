@@ -327,6 +327,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     document.addEventListener("DOMContentLoaded", function () {
         var form = document.getElementById("CustomerLoginForm");
 
+        var usernameInput = document.getElementById("name");
+            var emailInput = document.getElementById("CustomerEmail");
+            var passwordInput = document.getElementById("CustomerPassword");
+            var confirmPasswordInput = document.getElementById("CustomerConfirmPassword");
+
+
         form.addEventListener("submit", function(event) {
             // Select all input fields
             var usernameInput = document.getElementById("name");
@@ -342,8 +348,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 event.preventDefault(); // Prevent form submission
                 alert("Please fill in all the fields."); // Display an alert message
             }
-        });
-
+        })
         // Add blur event listeners to validate individual fields
         usernameInput.addEventListener("blur", validateUsername);
         emailInput.addEventListener("blur", validateEmail);
