@@ -894,8 +894,8 @@ document.addEventListener("DOMContentLoaded", function () {
         errorMessageElement.classList.add('error-message');
         errorMessageElement.style.color = '#922B21'; 
         errorMessageElement.style.fontWeight = 'bold'; 
-        errorMessageElement.style.fontSize = '13px'; // Adjust font size
-        errorMessageElement.style.fontFamily = 'Sans Serif'; // Change font-family
+        errorMessageElement.style.fontSize = '13px'; 
+        errorMessageElement.style.fontFamily = 'Sans Serif'; 
         errorMessageElement.textContent = message;
         inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
     }
