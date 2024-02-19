@@ -256,6 +256,90 @@ button.btn-danger:hover {
                 </form>
             </div>
 
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var form = document.getElementById("AddstyletipForm");
+
+                    var imageInput = document.getElementById("image");
+                    var tipdescriptionInput = document.getElementById("tipdescription");
+
+                    form.addEventListener("submit", function (event) {
+                        var imageInput = document.getElementById("image");
+                        var tipdescriptionInput = document.getElementById("tipdescription");
+                        
+                        var isValid = true;
+
+                        if (!validateImage(imageInput)) {
+                        isValid = false;
+                        }
+                        if (!validateField(tipdescriptionInput, validateDescriptionFormat)) {
+                            isValid = false;
+                        }
+
+                        if (!isValid) {
+                            event.preventDefault(); // Prevent form submission
+                        }
+                    });
+
+                    imageInput.addEventListener("change", function () {
+                        validateImage(imageInput);
+                    });
+                    tipdescriptionInput.addEventListener("blur", function () {
+                        validateField(tipdescriptionInput, validateDescriptionFormat, "*Please enter a valid description.");
+                    });
+
+                    function validateField(inputField, validationFunction, errorMessage) {
+                        var value = inputField.value.trim();
+                        if (!validationFunction(value)) {
+                            displayErrorMessage(errorMessage, inputField);
+                        } else {
+                            clearErrorMessage(inputField);
+                        }
+                    }
+
+                    function validateImage(imageInput) {
+                        var file = imageInput.files[0];
+                        var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Regular expression for allowed image extensions
+
+                        if (!file) {
+                            displayErrorMessage("*Please select an image.", imageInput);
+                            return;
+                        }
+
+                        if (!allowedExtensions.test(file.name)) {
+                            displayErrorMessage("*Supported image formats: JPEG, JPG, PNG", imageInput);
+                        } else {
+                            clearErrorMessage(imageInput);
+                        }
+                    }
+
+                    function validateDescriptionFormat(tipdescription) {
+                        return tipdescription.trim() !== '' && !/\s{2,}/.test(tipdescription);
+                    }
+
+                    // Function to display error messages
+                    function displayErrorMessage(message, inputField) {
+                        clearErrorMessage(inputField); 
+                        var errorMessageElement = document.createElement('div');
+                        errorMessageElement.classList.add('error-message');
+                        errorMessageElement.style.color = '#922B21'; 
+                        errorMessageElement.style.fontWeight = 'bold'; 
+                        errorMessageElement.style.fontSize = '13px'; 
+                        errorMessageElement.style.fontFamily = 'Sans Serif'; 
+                        errorMessageElement.textContent = message;
+                        inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
+                    }
+                      // Function to clear error messages
+                    function clearErrorMessage(inputField) {
+                        var errorMessage = inputField.parentNode.querySelector('.error-message');
+                        if (errorMessage) {
+                            errorMessage.remove();
+                        }
+                    }
+                });
+
+            </script>
+
             <!-- View Products Container -->
             <div id="viewstyletip" class="form-container" style="display:none;">
                 <!-- View style tips container -->
