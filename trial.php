@@ -1,76 +1,105 @@
 <?php
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Include your database connection file
-    require_once "connect.php";
+session_start();
 
-    // Define variables and initialize them
-    $productName = $description = $image_name = $subcategory_id = "";
-    $quantity = $price = $category_id = 0;
+if (isset($_SESSION['username'])) {
+    $user = $_SESSION['username'];
+} else {
+    // Redirect the user to the login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php
+require_once "connect.php";
 
-    // Sanitize and validate form data
-    if (isset($_POST['productName'])) {
+
+
+if(isset($_POST['Add'])) {
+    // Check if required fields are not empty
+    if (!empty($_POST['productName']) && !empty($_POST['description']) && !empty($_POST['quantity']) && !empty($_POST['price']) && !empty($_POST['category'])) {
         $productName = mysqli_real_escape_string($conn, $_POST['productName']);
-    }
-    if (isset($_POST['description'])) {
         $description = mysqli_real_escape_string($conn, $_POST['description']);
-    }
-    if (isset($_POST['quantity']) && isset($_POST['price']) && isset($_POST['category'])) {
         $quantity = (int)$_POST['quantity'];
         $price = (float)$_POST['price'];
         $category_id = (int)$_POST['category'];
-    }
+        $subcategory_id = null; // Initialize subcategory_id
 
-    // Determine the subcategory based on the selected category
-    switch ($category_id) {
-        case 1:
-        case 2:
-        case 3:
+        // Determine the subcategory based on the selected category
+        if ($category_id >= 1 && $category_id <= 3) {
             $subcat_key = 'Subcategory'.$category_id;
             if(isset($_POST[$subcat_key])){
                 $subcategory_id = (int)$_POST[$subcat_key];
             }
-            break;
-        default:
-            // Handle default case if needed
-            break;
-    }
+        }
 
-    // Handle file upload for the image
-    if(isset($_FILES['image']['name'])){
-        $image_name = $_FILES['image']['name'];
-        $target_dir = "img/product-img/";
-        $target_file = $target_dir . basename($image_name);
-    }
+        // Handle file upload for the image
+        if(isset($_FILES['image']['name'])){
+            $image_name = $_FILES['image']['name'];
+            $target_dir = "img/product-img/";
+            $target_file = $target_dir . basename($image_name);
+        }
 
-    // Prepare SQL statement with placeholders for the image
-    $sql = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Prepare SQL statement with placeholders for the image
+        $sql = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    // Prepare the statement
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
-        // Bind parameters to the statement
-        mysqli_stmt_bind_param($stmt, "ssiiisi", $productName, $description, $quantity, $price, $category_id, $image_name, $subcategory_id);
+        // Prepare the statement
+        $stmt = mysqli_prepare($conn, $sql);
+        if ($stmt) {
+            // Bind parameters to the statement
+            mysqli_stmt_bind_param($stmt, "ssiiisi", $productName, $description, $quantity, $price, $category_id, $image_name, $subcategory_id);
 
-        // Execute the statement
-        if (mysqli_stmt_execute($stmt)) {
-            echo "<script>alert('Product added successfully.')</script>";
-            header("Location: adminproductrec.php");
-            exit; // Make sure to exit after redirection
+            // Execute the statement
+            if (mysqli_stmt_execute($stmt)) {
+                $alert_message = 'Product added successfully.';
+            } else {
+                $alert_message = 'Error: ' . mysqli_stmt_error($stmt);
+            }
+            mysqli_stmt_close($stmt);
         } else {
-            echo "<script>alert('Error: " . mysqli_stmt_error($stmt) . "')</script>";
-        }                                                                                                                                                                                                                                                                                                       
-
-        // Close the statement
-        mysqli_stmt_close($stmt);
+            $alert_message = 'Error: Unable to prepare statement: ' . mysqli_error($conn);
+        }
     } else {
-        echo "Error: Unable to prepare statement: " . mysqli_error($conn);
+        $alert_message = 'Error: Required fields are empty.';
     }
-    // Close database connection
-    mysqli_close($conn);
+}
+
+// JavaScript code for displaying alert message
+// echo "<script>";
+// echo "alert('$alert_message');";
+// echo "window.location.href = 'adminproductrec.php';";
+// echo "</script>";
+?>
+
+<?php
+// Assuming you have a database connection already established
+
+// Fetch categories
+$query = "SELECT * FROM tbl_category";
+$result = mysqli_query($connection, $query);
+
+$categories = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    $categoryId = $row['category_id'];
+    $categories[$categoryId] = $row;
+}
+
+// Fetch subcategories for each category
+foreach ($categories as $categoryId => $category) {
+    $subQuery = "SELECT * FROM tbl_subcate WHERE category_id = $categoryId";
+    $subResult = mysqli_query($connection, $subQuery);
+
+    $subcategories = array();
+    while ($subRow = mysqli_fetch_assoc($subResult)) {
+        $subcategories[] = $subRow;
+    }
+
+    // Assign subcategories to each category
+    $categories[$categoryId]['subcategories'] = $subcategories;
 }
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -82,6 +111,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Admin dashboard</title>
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        function toggleSubcategories() {
+            var category = document.getElementById("category");
+            var categoryId = category.value;
+            var subcategories = document.querySelectorAll(".subcategories");
+
+            subcategories.forEach(function (element) {
+                element.style.display = "none";
+            });
+
+            var selectedSubcategory = document.getElementById("Subcategories" + categoryId);
+            if (selectedSubcategory) {
+                selectedSubcategory.style.display = "block";
+            }
+        }
+    </script>
 </head>
 
 <style>
@@ -137,11 +182,12 @@ button {
         }
 
 .categoryListContainer {
-    display: none; /* Hide the category list container by default */
+    display: flex; /* Hide the category list container by default */
     background-color: #f4f4f4;
     padding: 20px;
     border-radius: 5px;
     margin-top: 10px;
+    width: 100%; /* Adjust the width of the container */
 }
 
 /* Add more styles as needed */
@@ -267,7 +313,7 @@ button.btn-danger:hover {
             </div>
             <div class="user--info">
                 
-                <img src="" alt="">
+            <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
             </div>
         </div>
         <div class="section1">
@@ -297,54 +343,29 @@ button.btn-danger:hover {
         <input type="number" id="price" name="price" step="0.01" min="0" required><br><br>
 
         <label for="category">Category:</label>
-        <select id="category" name="category" required onchange="toggleSubcategories()">
-            <option value="">Select Category</option>
-            <option value="1">Women's Wear</option>
-            <option value="2">Accessories</option>
-            <option value="3">Footwear</option>
-        </select><br><br>
+            <select id="category" name="category" required onchange="toggleSubcategories()">
+                <option value="">Select Category</option>
+                <?php foreach ($categories as $categoryId => $category) { ?>
+                    <option value="<?php echo $categoryId; ?>"><?php echo $category['category_name']; ?></option>
+                <?php } ?>
+            </select><br><br>
 
-<!-- Subcategories for Women's Wear -->
-<div id="Subcategories1" class="subcategories" style="display: none;">
-    <label for="Subcategory1">Subcategory:</label>
-    <select id="Subcategory1" name="Subcategory1">
-        <option value="">Select Subcategory</option>
-        <option value="1">Dresses</option>
-        <option value="2">Co-ords Sets</option>
-        <option value="3">Tops</option>
-        <option value="4">Bottoms</option>
-        <option value="5">Jackets</option>
-        <option value="6">Jumpsuits</option>
-        <option value="7">Scarfs & Stoles</option>
-    </select><br><br>
-</div>
-
-<!-- Subcategories for Accessories -->
-<div id="Subcategories2" class="subcategories" style="display: none;">
-    <label for="Subcategory2">Subcategory:</label>
-    <select id="Subcategory2" name="Subcategory2">
-        <option value="">Select Subcategory</option>
-        <option value="8">Jewellery</option>
-        <option value="9">Bag</option>
-    </select><br><br>
-</div>
-
-<!-- Subcategories for Footwear -->
-<div id="Subcategories3" class="subcategories" style="display: none;">
-    <label for="Subcategory3">Subcategory:</label>
-    <select id="Subcategory3" name="Subcategory3">
-        <option value="">Select Subcategory</option>
-        <option value="10">Shoes</option>
-        <option value="11">Sandals</option>
-    </select><br><br>
-</div>
-
-
+            <?php foreach ($categories as $categoryId => $category) { ?>
+                <div id="Subcategories<?php echo $categoryId; ?>" class="subcategories" style="display: none;">
+                    <label for="Subcategory<?php echo $categoryId; ?>">Subcategory:</label>
+                    <select id="Subcategory<?php echo $categoryId; ?>" name="Subcategory<?php echo $categoryId; ?>">
+                        <option value="">Select Subcategory</option>
+                        <?php foreach ($category['subcategories'] as $subcategory) { ?>
+                            <option value="<?php echo $subcategory['subcategory_id']; ?>"><?php echo $subcategory['subcategory_name']; ?></option>
+                        <?php } ?>
+                    </select><br><br>
+                </div>
+            <?php } ?>
 
         <label for="image">Product Image:</label>
         <input type="file" id="image" name="image" accept="image/*" required><br><br>
 
-        <input type="submit" value="Add" style="width:120px; height:50px">
+        <input type="submit" value="Add" name="Add" style="width:120px; height:50px">
     </form>
             </div>
 
@@ -361,12 +382,12 @@ button.btn-danger:hover {
             <th>Category</th>
             <th>Subcategory</th>
             <th>Image</th> <!-- New th for the product image -->
-            <th> </th>
+            <th>Actions</th>
         </tr>
         <!-- Fetch products from the database and display them in the table -->
         <?php
-        include 'connect.php';
-
+        require_once 'connect.php';
+        
         // Perform SQL query to fetch products
         $sql = "SELECT p_name, description, qty, price, category_id, subcategory_id, image FROM tbl_products";
         $result = mysqli_query($conn, $sql);
@@ -396,7 +417,7 @@ button.btn-danger:hover {
         }
 
         // Close the database connection
-        mysqli_close($conn);
+        // mysqli_close($result);
         ?>
     </table>
 </div>
@@ -405,23 +426,62 @@ button.btn-danger:hover {
 <!-- Add category form -->
 <div id="addCategoryForm" class="form-container" style="display: none;">
     <h4 style="color:#922B21">Add Category</h4><br>
-    <form action="add_category.php" id="CategoryForm" method="POST" onclick="return validateCategoryForm();">
+    <form action="#" id="CategoryForm" method="POST">
         <label for="categoryName">Category Name:</label>
         <input type="text" id="categoryName" name="categoryName" required><br>
         <div id="categoryError" style="color: #922B21; font-size: 12px; font-weight: bold; font-family: sans-serif;"></div><br> <!-- Container for error messages -->
-        <input type="submit" value="Add" style="width:120px; height:50px">
+        <input type="submit" value="Add" name="addcate" style="width:120px; height:50px">
     </form>
 </div>
 
+<?php
+// Include the database connection
+require_once("connect.php");
+
+// Check if the form is submitted
+if(isset($_POST['addcate'])) {
+    // Validate and sanitize the input
+    if (!empty($_POST["categoryName"])) {
+        $categoryName = $_POST["categoryName"];
+        // Prepare SQL statement to insert data into tbl_category
+        $sql = "INSERT INTO `tbl_category` (`category_name`) VALUES (?)";
+
+        // Prepare and bind parameters
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            die('Error: ' . $conn->error); // Handle preparation error
+        }
+        $stmt->bind_param("s", $categoryName);
+        
+        // Execute the statement
+        if ($stmt->execute() === TRUE) {
+            $alert_message = 'New record created successfully.';
+        } else {
+            $alert_message = 'Error: ' . $conn->error;
+        }
+
+        // Close statement
+        $stmt->close();
+    } else {
+        $alert_message = 'Category name cannot be empty.';
+    }
+}
+
+// JavaScript code for displaying alert message
+echo "<script>";
+echo "alert('$alert_message');";
+echo "window.location.href = 'adminproductrec.php';";
+echo "</script>";
+?>
 
 
 
 <!-- Add subcategory form -->
 <div id="addSubcategoryForm" class="form-container" style="display: none;">
     <h4 style="color:#922B21">Add Subcategory</h4><br>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" id="subCategoryForm" method="POST" onclick="return validateSubcategoryForm();">
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" id="subCategoryForm" method="POST" >
+        <label for="category1">Category:</label>
+        <select id="category1" name="category1" required>
             <option value="">Select Category</option>
             <option value="1">Women's Wear</option>
             <option value="2">Accessories</option>
@@ -433,9 +493,78 @@ button.btn-danger:hover {
         <input type="text" id="subcategoryName" name="subcategoryName" required>
         <div id="subcategoryNameError" class="error-message" style="color: #922B21;"></div><br><br>
 
-        <input type="submit" value="Add" style="width:120px; height:50px">
+        <input type="submit" value="Add" name="addsubcat" style="width:120px; height:50px">
     </form>
 </div>
+
+<?php
+// Include your database connection file
+require_once "connect.php";
+
+// Check if the form is submitted
+if(isset($_post['addsubcat'])) {
+    // Define variables and initialize them
+    $subcategoryName = $category1 = "";
+
+    // Sanitize and validate form data
+    if (isset($_POST['subcategoryName'])) {
+        $subcategoryName = mysqli_real_escape_string($conn, $_POST['subcategoryName']);
+    }
+    if (isset($_POST['category1'])) {
+        $category1 = (int)$_POST['category1'];
+    }
+
+    // Perform validation
+    $errors = array();
+
+    if (empty($subcategoryName)) {
+        $errors[] = "Subcategory name is required.";
+    }
+
+    if ($category1 === 0) {
+        $errors[] = "Please select a category.";
+    }
+
+    // If there are no errors, proceed with inserting data into tbl_subcate
+    if (empty($errors)) {
+        // Prepare SQL statement to insert data into tbl_subcate
+        $sql = "INSERT INTO tbl_subcate (subcategory_name, category_id) VALUES (?, ?)";
+
+        // Prepare the statement
+        $stmt = mysqli_prepare($conn, $sql);
+        if ($stmt) {
+            // Bind parameters to the statement
+            mysqli_stmt_bind_param($stmt, "si", $subcategoryName, $category1);
+
+            // Execute the statement
+            if (mysqli_stmt_execute($stmt)) {
+                $alert_message = 'Subcategory added successfully.';
+            } else {
+                $alert_message = 'Error: ' . mysqli_stmt_error($stmt);
+            }
+
+            // Close the statement
+            mysqli_stmt_close($stmt);
+        } else {
+            $alert_message = 'Error: Unable to prepare statement: ' . mysqli_error($conn);
+        }
+    } else {
+        // If there are errors, display them
+        $alert_message = implode("\\n", $errors);
+    }
+
+    // Close database connection
+    mysqli_close($conn);
+}
+
+// JavaScript code for displaying alert message
+echo "<script>";
+echo "alert('$alert_message');";
+echo "window.location.href = 'adminproductrec.php';";
+echo "</script>";
+?>
+
+
 
 <?php
 include 'connect.php';
@@ -451,12 +580,12 @@ mysqli_close($conn);
 
 <!-- Display category list -->
 <div id="categoryListContainer" class="categoryListContainer" style="display:none;">
-    <h4 style="color:#922B21">Category List</h4>
+    <h4 style="color:#922B21">Category List</h4><br>
     <table>
         <tr>
             <th>Category ID</th>
             <th>Category Name</th>
-            <th> </th>
+            <th>Actions</th>
         </tr>
         <?php
         if (mysqli_num_rows($result_categories) > 0) {
@@ -481,7 +610,7 @@ mysqli_close($conn);
 
 <!-- Display subcategory data -->
 <div id="subcategoryListContainer" class="categoryListContainer" style="display:none;">
-    <h4 style="color:#922B21">Subcategory List</h4>
+    <h4 style="color:#922B21">Subcategory List</h4><br>
     <table>
         <tr>
             <th>Subcategory ID</th>
@@ -568,149 +697,201 @@ mysqli_close($conn);
         form.style.display = 'block';
     }
 })();
-
-
-        // Add more JavaScript functionality here, such as form submission handling
-
-        function toggleSubcategories() {
-            var category = document.getElementById('category').value;
-            var subcategories = document.getElementsByClassName('subcategories');
-
-        // Hide all subcategories initially
-        for (var i = 0; i < subcategories.length; i++) {
-            subcategories[i].style.display = 'none';
-        }
-
-        // Show subcategories based on the selected main category
-        switch (category) {
-            case '1':
-                document.getElementById('Subcategories1').style.display = 'block';
-                break;
-            case '2':
-                document.getElementById('Subcategories2').style.display = 'block';
-                break;
-            case '3':
-                document.getElementById('Subcategories3').style.display = 'block';
-                break;
-            default:
-                break;
-        }
-        }
-        // Add an event listener to the category select element to trigger the toggleSubcategories function
-        document.getElementById('category').addEventListener('change', toggleSubcategories);
-
+        
         document.addEventListener("DOMContentLoaded", function () {
-    var productNameInput = document.getElementById("productName");
-    var descriptionInput = document.getElementById("description");
-    var quantityInput = document.getElementById("quantity");
-    var priceInput = document.getElementById("price");
-    var categoryInput = document.getElementById("category");
-    var imageInput = document.getElementById("image");
+    var form = document.getElementById("AddProductForm");
 
-    productNameInput.addEventListener("blur", function () {
-        validateField(productNameInput, validateProductNameFormat, "*Please enter a valid product name.");
+    form.addEventListener("submit", function (event) {
+        var productNameInput = document.getElementById("productName");
+        var descriptionInput = document.getElementById("description");
+        var quantityInput = document.getElementById("quantity");
+        var priceInput = document.getElementById("price");
+        var categoryInput = document.getElementById("category");
+        var imageInput = document.getElementById("image");
+
+        var isValid = true;
+
+        if (!validateField(productNameInput, validateProductNameFormat, "*Please enter a valid product name.")) {
+            isValid = false;
+        }
+        if (!validateField(descriptionInput, validateDescriptionFormat, "*Please enter a valid description.")) {
+            isValid = false;
+        }
+        if (!validateField(quantityInput, validateQuantityFormat, "*Please enter a valid quantity.")) {
+            isValid = false;
+        }
+        if (!validateField(priceInput, validatePriceFormat, "*Please enter a valid price.")) {
+            isValid = false;
+        }
+        if (!validateField(categoryInput, validateCategoryFormat, "*Please select a category.")) {
+            isValid = false;
+        }
+        if (!validateImage(imageInput)) {
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission
+        }
     });
 
-    descriptionInput.addEventListener("blur", function () {
-        validateField(descriptionInput, validateDescriptionFormat, "*Please enter a valid description.");
+    var fieldsToValidate = [
+        { input: document.getElementById("productName"), validationFunction: validateProductNameFormat, errorMessage: "*Please enter a valid product name." },
+        { input: document.getElementById("description"), validationFunction: validateDescriptionFormat, errorMessage: "*Please enter a valid description." },
+        { input: document.getElementById("quantity"), validationFunction: validateQuantityFormat, errorMessage: "*Please enter a valid quantity." },
+        { input: document.getElementById("price"), validationFunction: validatePriceFormat, errorMessage: "*Please enter a valid price." },
+        { input: document.getElementById("category"), validationFunction: validateCategoryFormat, errorMessage: "*Please select a category." },
+        { input: document.getElementById("image"), validationFunction: validateImage, errorMessage: "*Please select an image." }
+    ];
+
+    fieldsToValidate.forEach(function (field) {
+        field.input.addEventListener("blur", function () {
+            validateField(field.input, field.validationFunction, field.errorMessage);
+        });
     });
 
-    quantityInput.addEventListener("blur", function () {
-        validateField(quantityInput, validateQuantityFormat, "*Please enter a valid quantity.");
-    });
+    function validateField(inputField, validationFunction, errorMessage) {
+        var value = inputField.value.trim();
+        if (!validationFunction(value)) {
+            displayErrorMessage(errorMessage, inputField);
+            return false;
+        } else {
+            clearErrorMessage(inputField);
+            return true;
+        }
+    }
 
-    priceInput.addEventListener("blur", function () {
-        validateField(priceInput, validatePriceFormat, "*Please enter a valid price.");
-    });
+    function validateImage(imageInput) {
+        var file = imageInput.files[0];
+        var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; 
 
-    categoryInput.addEventListener("change", function () {
-        validateField(categoryInput, validateCategoryFormat, "*Please select a category.");
-    });
+        if (!file) {
+            displayErrorMessage("*Please select an image.", imageInput);
+            return false;
+        }
 
-    imageInput.addEventListener("change", function () {
-        validateImage(imageInput);
-    });
+        if (!allowedExtensions.test(file.name)) {
+            displayErrorMessage("*Supported image formats: JPEG, JPG, PNG", imageInput);
+            return false;
+        } 
+
+        clearErrorMessage(imageInput);
+        return true;
+    }
+
+    function displayErrorMessage(message, inputField) {
+        clearErrorMessage(inputField); 
+        var errorMessageElement = document.createElement('div');
+        errorMessageElement.classList.add('error-message');
+        errorMessageElement.style.color = '#922B21'; 
+        errorMessageElement.style.fontWeight = 'bold'; 
+        errorMessageElement.style.fontSize = '13px'; 
+        errorMessageElement.style.fontFamily = 'Sans Serif';
+        errorMessageElement.textContent = message;
+        inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
+    }
+
+    function clearErrorMessage(inputField) {
+        var errorMessage = inputField.parentNode.querySelector('.error-message');
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }
+
+    function validateProductNameFormat(productName) {
+        return /^[a-zA-Z\s]*$/.test(productName) && !/\s{2,}/.test(productName);
+    }
+
+    function validateDescriptionFormat(description) {
+        return description.trim() !== '' && !/\s{2,}/.test(description);
+    }
+
+    // Function to validate the format of the quantity
+function validateQuantityFormat(quantity) {
+    // Check if the quantity is a valid positive integer and has less than 6 digits
+    return /^\d{1,5}$/.test(quantity) && Number.isInteger(parseFloat(quantity)) && parseInt(quantity) > 0;
+}
+
+
+    function validatePriceFormat(price) {
+        return !isNaN(price) && parseFloat(price) > 0;
+    }
+
+    function validateCategoryFormat(category) {
+        return category !== "";
+    }
+
 });
 
-        // Function to validate a field
-        function validateField(inputField, validationFunction, errorMessage) {
-            var value = inputField.value.trim();
-            if (!validationFunction(value)) {
-                displayErrorMessage(errorMessage, inputField);
-            } else {
-                clearErrorMessage(inputField);
-            }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    var categoryNameInput = document.getElementById("categoryName");
+    var category1Input = document.getElementById("category1");
+    var subcategoryNameInput = document.getElementById("subcategoryName");
+
+    if (categoryNameInput) {
+        categoryNameInput.addEventListener("blur", function () {
+            validateName(categoryNameInput, "*Invalid category name format.");
+        });
+    }
+
+    if (category1Input) {
+        category1Input.addEventListener("change", function () {
+            validateCategory1(category1Input);
+        });
+    }
+
+    if (subcategoryNameInput) {
+        subcategoryNameInput.addEventListener("blur", function () {
+            validateName(subcategoryNameInput, "*Invalid subcategory name format.");
+        });
+    }
+
+    function validateName(inputField, errorMessageText) {
+        var inputValue = inputField.value.trim();
+        if (!isValidName(inputValue)) {
+            displayErrorMessage(errorMessageText, inputField);
+        } else {
+            clearErrorMessage(inputField);
         }
-
-        function validateImage(imageInput) {
-    var file = imageInput.files[0];
-    var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Regular expression for allowed image extensions
-
-    if (!file) {
-        displayErrorMessage("*Please select an image.", imageInput);
-        return;
     }
 
-    if (!allowedExtensions.test(file.name)) {
-        displayErrorMessage("*Supported image formats: JPEG, JPG, PNG", imageInput);
-    } else {
-        clearErrorMessage(imageInput);
+    function isValidName(name) {
+        return /^[a-zA-Z\s]*$/.test(name) && !/\s{2,}/.test(name);
     }
-}
 
-        // Validation functions
-function validateProductNameFormat(productName) {
-    return /^[a-zA-Z\s]*$/.test(productName) && !/\s{2,}/.test(productName);
-}
-
-function validateDescriptionFormat(description) {
-    return description.trim() !== '' && !/\s{2,}/.test(description);
-}
-
-function validateQuantityFormat(quantity) {
-    return Number.isInteger(parseFloat(quantity)) && parseInt(quantity) > 0;
-}           
-
-
-function validatePriceFormat(price) {
-    return !isNaN(price) && parseFloat(price) > 0;
-}
-
-function validateCategoryFormat(category) {
-    return category !== "";
-}
-
-        // Function to display error messages
-function displayErrorMessage(message, inputField) {
-    clearErrorMessage(inputField); // Clear existing errors
-    var errorMessageElement = document.createElement('div');
-    errorMessageElement.classList.add('error-message');
-    errorMessageElement.textContent = message;
-
-            // Apply styles to the error message element
-    errorMessageElement.style.color = '#922B21'; // Change color to red
-    errorMessageElement.style.fontWeight = 'bold'; // Set font weight to bold
-    errorMessageElement.style.fontSize = '13px'; // Adjust font size
-    errorMessageElement.style.fontFamily = 'Sans Serif'; // Change font-family
-
-    inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
-}
-
-        // Function to clear error messages
-function clearErrorMessage(inputField) {
-    var errorMessage = inputField.parentNode.querySelector('.error-message');
-    if (errorMessage) {
-        errorMessage.remove();
+    function validateCategory1(category1Input) {
+        var category1 = category1Input.value.trim();
+        if (!category1) {
+            displayErrorMessage("*Please select a category.", category1Input);
+        } else {
+            clearErrorMessage(category1Input);
+        }
     }
-}
 
+    function displayErrorMessage(message, inputField) {
+        clearErrorMessage(inputField); 
+        var errorMessageElement = document.createElement('div');
+        errorMessageElement.classList.add('error-message');
+        errorMessageElement.style.color = '#922B21'; 
+        errorMessageElement.style.fontWeight = 'bold'; 
+        errorMessageElement.style.fontSize = '13px'; 
+        errorMessageElement.style.fontFamily = 'Sans Serif'; 
+        errorMessageElement.textContent = message;
+        inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
+    }
 
-    
+    function clearErrorMessage(inputField) {
+        var errorMessage = inputField.parentNode.querySelector('.error-message');
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }
+});
+
 </script>
-
-
-
-    
+   
     </div>
 </body>
 

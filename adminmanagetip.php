@@ -275,10 +275,11 @@ button.btn-danger:hover {
                     <?php
                     $sql = "SELECT * FROM tbl_tip";
                     $result = mysqli_query($conn, $sql);
+                    $sl=0;
                     if (mysqli_num_rows($result) > 0) {
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo "<tr>
-                                    <td>" . $row['tip_id'] . "</td>
+                                    <td> ".++$sl."</td>
                                     <td><img src='img/tip-img/" . $row['image'] . "' alt='Product Image' width='100'></td>
                                     <td>" . $row['tipdescription'] . "</td>
                                     <td>

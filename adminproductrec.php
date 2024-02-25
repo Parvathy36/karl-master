@@ -71,6 +71,33 @@ if(isset($_POST['Add'])) {
 // echo "</script>";
 ?>
 
+<?php
+
+// Fetch categories
+$query = "SELECT * FROM tbl_category";
+$result = mysqli_query($conn, $query);
+
+$categories = array();
+while ($row = mysqli_fetch_assoc($result)) {
+    $categoryId = $row['category_id'];
+    $categories[$categoryId] = $row;
+}
+
+// Fetch subcategories for each category
+foreach ($categories as $categoryId => $category) {
+    $subQuery = "SELECT * FROM tbl_subcate WHERE category_id = $categoryId";
+    $subResult = mysqli_query($conn, $subQuery);
+
+    $subcategories = array();
+    while ($subRow = mysqli_fetch_assoc($subResult)) {
+        $subcategories[] = $subRow;
+    }
+
+    // Assign subcategories to each category
+    $categories[$categoryId]['subcategories'] = $subcategories;
+}
+?>
+
 
 
 
@@ -83,6 +110,22 @@ if(isset($_POST['Add'])) {
     <title>Admin dashboard</title>
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        function toggleSubcategories() {
+            var category = document.getElementById("category");
+            var categoryId = category.value;
+            var subcategories = document.querySelectorAll(".subcategories");
+
+            subcategories.forEach(function (element) {
+                element.style.display = "none";
+            });
+
+            var selectedSubcategory = document.getElementById("Subcategories" + categoryId);
+            if (selectedSubcategory) {
+                selectedSubcategory.style.display = "block";
+            }
+        }
+    </script>
 </head>
 
 <style>
@@ -299,49 +342,24 @@ button.btn-danger:hover {
         <input type="number" id="price" name="price" step="0.01" min="0" required><br><br>
 
         <label for="category">Category:</label>
-        <select id="category" name="category" required onchange="toggleSubcategories()">
-            <option value="">Select Category</option>
-            <option value="1">Women's Wear</option>
-            <option value="2">Accessories</option>
-            <option value="3">Footwear</option>
-        </select><br><br>
+            <select id="category" name="category" required onchange="toggleSubcategories()">
+                <option value="">Select Category</option>
+                <?php foreach ($categories as $categoryId => $category) { ?>
+                    <option value="<?php echo $categoryId; ?>"><?php echo $category['category_name']; ?></option>
+                <?php } ?>
+            </select><br><br>
 
-<!-- Subcategories for Women's Wear -->
-<div id="Subcategories1" class="subcategories" style="display: none;">
-    <label for="Subcategory1">Subcategory:</label>
-    <select id="Subcategory1" name="Subcategory1">
-        <option value="">Select Subcategory</option>
-        <option value="1">Dresses</option>
-        <option value="2">Co-ords Sets</option>
-        <option value="3">Tops</option>
-        <option value="4">Bottoms</option>
-        <option value="5">Jackets</option>
-        <option value="6">Jumpsuits</option>
-        <option value="7">Scarfs & Stoles</option>
-    </select><br><br>
-</div>
-
-<!-- Subcategories for Accessories -->
-<div id="Subcategories2" class="subcategories" style="display: none;">
-    <label for="Subcategory2">Subcategory:</label>
-    <select id="Subcategory2" name="Subcategory2">
-        <option value="">Select Subcategory</option>
-        <option value="8">Jewellery</option>
-        <option value="9">Bag</option>
-    </select><br><br>
-</div>
-
-<!-- Subcategories for Footwear -->
-<div id="Subcategories3" class="subcategories" style="display: none;">
-    <label for="Subcategory3">Subcategory:</label>
-    <select id="Subcategory3" name="Subcategory3">
-        <option value="">Select Subcategory</option>
-        <option value="10">Shoes</option>
-        <option value="11">Sandals</option>
-    </select><br><br>
-</div>
-
-
+            <?php foreach ($categories as $categoryId => $category) { ?>
+                <div id="Subcategories<?php echo $categoryId; ?>" class="subcategories" style="display: none;">
+                    <label for="Subcategory<?php echo $categoryId; ?>">Subcategory:</label>
+                    <select id="Subcategory<?php echo $categoryId; ?>" name="Subcategory<?php echo $categoryId; ?>">
+                        <option value="">Select Subcategory</option>
+                        <?php foreach ($category['subcategories'] as $subcategory) { ?>
+                            <option value="<?php echo $subcategory['subcategory_id']; ?>"><?php echo $subcategory['subcategory_name']; ?></option>
+                        <?php } ?>
+                    </select><br><br>
+                </div>
+            <?php } ?>
 
         <label for="image">Product Image:</label>
         <input type="file" id="image" name="image" accept="image/*" required><br><br>
@@ -356,6 +374,7 @@ button.btn-danger:hover {
     
     <table>
         <tr>
+            <th>Sl no.</th>
             <th>Product Name</th>
             <th>Description</th>
             <th>Quantity</th>
@@ -370,21 +389,32 @@ button.btn-danger:hover {
         require_once 'connect.php';
         
         // Perform SQL query to fetch products
-        $sql = "SELECT p_name, description, qty, price, category_id, subcategory_id, image FROM tbl_products";
+        $sql = "SELECT 
+            p.p_name, 
+            p.description, 
+            p.qty, 
+            p.price, 
+            c.category_name, 
+            s.subcategory_name, 
+            p.image 
+        FROM tbl_products p 
+        LEFT JOIN tbl_category c ON p.category_id = c.category_id 
+        LEFT JOIN tbl_subcate s ON p.subcategory_id = s.subcategory_id";
         $result = mysqli_query($conn, $sql);
-
+        $sl=0;
         if (mysqli_num_rows($result) > 0) {
             // Output data of each row
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>
+                        <td> ".++$sl."</td>
                         <td>" . $row['p_name'] . "</td>
                         <td>" . $row['description'] . "</td>
                         <td>" . $row['qty'] . "</td>
                         <td>₹" . $row['price'] . "</td>
-                        <td>" . $row['category_id'] . "</td>                                                  
-                        <td>" . $row['subcategory_id'] . "</td>
-                        <td><img src='img/product-img/" . $row['image'] . "'width=100' 'height=135'></td> <!-- Display image -->
-
+                        <td>" . $row['category_name'] . "</td>                                                  
+                        <td>" . $row['subcategory_name'] . "</td>
+                        <td><img src='img/product-img/" . $row['image'] . "' width='100' height='135'></td> <!-- Display image -->
+        
                         <td>
                             <form action='' method='post'>
                                 <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
@@ -462,12 +492,12 @@ echo "</script>";
     <h4 style="color:#922B21">Add Subcategory</h4><br>
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" id="subCategoryForm" method="POST" >
         <label for="category1">Category:</label>
-        <select id="category1" name="category1" required>
-            <option value="">Select Category</option>
-            <option value="1">Women's Wear</option>
-            <option value="2">Accessories</option>
-            <option value="3">Footwear</option>
-        </select>
+        <select id="category" name="category" required onchange="toggleSubcategories()">
+                <option value="">Select Category</option>
+                <?php foreach ($categories as $categoryId => $category) { ?>
+                    <option value="<?php echo $categoryId; ?>"><?php echo $category['category_name']; ?></option>
+                <?php } ?>
+            </select>
         <div id="categoryError" class="error-message" style="color: #922B21;"></div><br><br>
 
         <label for="subcategoryName">Subcategory Name:</label>
@@ -479,70 +509,45 @@ echo "</script>";
 </div>
 
 <?php
-// Include your database connection file
-require_once "connect.php";
+// Include the database connection
+require_once("connect.php");
 
 // Check if the form is submitted
-if(isset($_post['addsubcat'])) {
-    // Define variables and initialize them
-    $subcategoryName = $category1 = "";
+if(isset($_POST['addsubcat'])) {
+    // Validate and sanitize the input
+    if (!empty($_POST["subcategoryName"]) && !empty($_POST["category"])) {
+        $subcategoryName = $_POST["subcategoryName"];
+        $categoryId = $_POST["category"];
 
-    // Sanitize and validate form data
-    if (isset($_POST['subcategoryName'])) {
-        $subcategoryName = mysqli_real_escape_string($conn, $_POST['subcategoryName']);
-    }
-    if (isset($_POST['category1'])) {
-        $category1 = (int)$_POST['category1'];
-    }
-
-    // Perform validation
-    $errors = array();
-
-    if (empty($subcategoryName)) {
-        $errors[] = "Subcategory name is required.";
-    }
-
-    if ($category1 === 0) {
-        $errors[] = "Please select a category.";
-    }
-
-    // If there are no errors, proceed with inserting data into tbl_subcate
-    if (empty($errors)) {
         // Prepare SQL statement to insert data into tbl_subcate
-        $sql = "INSERT INTO tbl_subcate (subcategory_name, category_id) VALUES (?, ?)";
+        $sql = "INSERT INTO `tbl_subcate` (`subcategory_name`, `category_id`) VALUES (?, ?)";
 
-        // Prepare the statement
-        $stmt = mysqli_prepare($conn, $sql);
-        if ($stmt) {
-            // Bind parameters to the statement
-            mysqli_stmt_bind_param($stmt, "si", $subcategoryName, $category1);
-
-            // Execute the statement
-            if (mysqli_stmt_execute($stmt)) {
-                $alert_message = 'Subcategory added successfully.';
-            } else {
-                $alert_message = 'Error: ' . mysqli_stmt_error($stmt);
-            }
-
-            // Close the statement
-            mysqli_stmt_close($stmt);
-        } else {
-            $alert_message = 'Error: Unable to prepare statement: ' . mysqli_error($conn);
+        // Prepare and bind parameters
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            die('Error: ' . $conn->error); // Handle preparation error
         }
+        $stmt->bind_param("si", $subcategoryName, $categoryId);
+        
+        // Execute the statement
+        if ($stmt->execute() === TRUE) {
+            $alert_message = 'New subcategory created successfully.';
+        } else {
+            $alert_message = 'Error: ' . $conn->error;
+        }
+
+        // Close statement
+        $stmt->close();
     } else {
-        // If there are errors, display them
-        $alert_message = implode("\\n", $errors);
+        $alert_message = 'Subcategory name and category selection are required.';
     }
 
-    // Close database connection
-    mysqli_close($conn);
+    // JavaScript code for displaying alert message
+    echo "<script>";
+    echo "alert('$alert_message');";
+    echo "window.location.href = 'adminproductrec.php';";
+    echo "</script>";
 }
-
-// JavaScript code for displaying alert message
-echo "<script>";
-echo "alert('$alert_message');";
-echo "window.location.href = 'adminproductrec.php';";
-echo "</script>";
 ?>
 
 
@@ -550,11 +555,11 @@ echo "</script>";
 <?php
 include 'connect.php';
 // Fetch and display category list from tbl_category
-$sql_categories = "SELECT * FROM tbl_category";
+$sql_categories = "SELECT category_name FROM tbl_category";
 $result_categories = mysqli_query($conn, $sql_categories);
 
 // Fetch and display subcategory data from tbl_subcate
-$sql_subcategories = "SELECT * FROM tbl_subcate";
+$sql_subcategories = "SELECT s.subcategory_name, c.category_name FROM tbl_subcate s LEFT JOIN tbl_category c ON s.category_id = c.category_id ";
 $result_subcategories = mysqli_query($conn, $sql_subcategories);
 mysqli_close($conn);
 ?>
@@ -564,15 +569,16 @@ mysqli_close($conn);
     <h4 style="color:#922B21">Category List</h4><br>
     <table>
         <tr>
-            <th>Category ID</th>
+            <th>Sl no.</th>
             <th>Category Name</th>
             <th>Actions</th>
         </tr>
         <?php
+        $sl = 0;
         if (mysqli_num_rows($result_categories) > 0) {
             while ($row = mysqli_fetch_assoc($result_categories)) {
                 echo "<tr>
-                        <td>" . $row['category_id'] . "</td>
+                        <td> ".++$sl."</td>
                         <td>" . $row['category_name'] . "</td>
                         <td>
                             <form action='' method='post'>
@@ -594,18 +600,19 @@ mysqli_close($conn);
     <h4 style="color:#922B21">Subcategory List</h4><br>
     <table>
         <tr>
-            <th>Subcategory ID</th>
+            <th>Sl no.</th>
             <th>Subcategory Name</th>
-            <th>Category ID</th>
+            <th>Category Nmae</th>
             <th>Actions</th> <!-- Changed from an empty header -->
         </tr>
         <?php
+        $sl = 0;
         if (mysqli_num_rows($result_subcategories) > 0) {
             while ($row = mysqli_fetch_assoc($result_subcategories)) {
                 echo "<tr>
-                        <td>" . $row['subcategory_id'] . "</td>
+                        <td> ". ++$sl ."</td>
                         <td>" . $row['subcategory_name'] . "</td>
-                        <td>" . $row['category_id'] . "</td>
+                        <td>" . $row['category_name'] . "</td>
                         <td>
                             <form action='' method='post'>
                                 <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
@@ -678,34 +685,6 @@ mysqli_close($conn);
         form.style.display = 'block';
     }
 })();
-
-
-        // Add more JavaScript functionality here, such as form submission handling
-
-        function toggleSubcategories() {
-            var category = document.getElementById('category').value;
-            var subcategories = document.getElementsByClassName('subcategories');
-
-        // Hide all subcategories initially
-        for (var i = 0; i < subcategories.length; i++) {
-            subcategories[i].style.display = 'none';
-        }
-
-        // Show subcategories based on the selected main category
-        switch (category) {
-            case '1':
-                document.getElementById('Subcategories1').style.display = 'block';
-                break;
-            case '2':
-                document.getElementById('Subcategories2').style.display = 'block';
-                break;
-            case '3':
-                document.getElementById('Subcategories3').style.display = 'block';
-                break;
-            default:
-                break;
-        }
-        }
         
         document.addEventListener("DOMContentLoaded", function () {
     var form = document.getElementById("AddProductForm");
