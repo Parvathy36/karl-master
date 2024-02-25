@@ -1,62 +1,64 @@
 <?php
 session_start();
 
-if (isset($_SESSION['username'])) {
-    $user = $_SESSION['username'];
-} else {
+// Check if the user is logged in
+if (!isset($_SESSION['username'])) {
     // Redirect the user to the login page if not logged in
     header("Location: login.php");
     exit();
 }
-?>
-<?php
+
 // Include your database connection file
-require_once "connect.php";
+require("connect.php");
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Define variables and initialize them
-    $tipdescription = $image_name = "";
-
-    // Sanitize and validate form data
-    if (isset($_POST['tipdescription'])) {
+    // Validate form data
+    if (!empty($_POST['tipdescription']) && isset($_FILES['image']['name']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+        // Sanitize and validate form data
         $tipdescription = mysqli_real_escape_string($conn, $_POST['tipdescription']);
-    }
-
-    // Handle file upload for the image
-    if (isset($_FILES['image']['name'])) {
-        $image_name = $_FILES['image']['name'];
+        $image_name = basename($_FILES['image']['name']);
         $target_dir = "img/tip-img/";
-        $target_file = $target_dir . basename($image_name);
-    }
+        $target_file = $target_dir . $image_name;
 
-    // Prepare SQL statement with placeholders for the image
-    $sql = "INSERT INTO tbl_tip (image, tipdescription) VALUES (?, ?)";
+        // Move uploaded file to the target directory
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+            // Prepare SQL statement with placeholders for the image
+            $sql = "INSERT INTO tbl_tip (image, tipdescription) VALUES (?, ?)";
 
-    // Prepare the statement
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
-        // Bind parameters to the statement
-        mysqli_stmt_bind_param($stmt, "ss", $image_name, $tipdescription);
+            // Prepare the statement
+            $stmt = mysqli_prepare($conn, $sql);
+            if ($stmt) {
+                // Bind parameters to the statement
+                mysqli_stmt_bind_param($stmt, "ss", $image_name, $tipdescription);
 
-        // Execute the statement
-        if (mysqli_stmt_execute($stmt)) {
-            echo "<script>alert('Product added successfully.')</script>";
-            header("Location: adminmanagetip.php");
-            exit; // Make sure to exit after redirection
+                // Execute the statement
+                if (mysqli_stmt_execute($stmt)) {
+                    echo "<script>alert('Style tip added successfully.')</script>";
+                    header("Location: adminmanagetip.php");
+                    exit; // Make sure to exit after redirection
+                } else {
+                    echo "<script>alert('Error: " . mysqli_stmt_error($stmt) . "')</script>";
+                }
+
+                // Close the statement
+                mysqli_stmt_close($stmt);
+            } else {
+                echo "Error: Unable to prepare statement: " . mysqli_error($conn);
+            }
         } else {
-            echo "<script>alert('Error: " . mysqli_stmt_error($stmt) . "')</script>";
+            echo "<script>alert('Error uploading file.')</script>";
         }
-
-        // Close the statement
-        mysqli_stmt_close($stmt);
     } else {
-        echo "Error: Unable to prepare statement: " . mysqli_error($conn);
+        echo "<script>alert('Please fill out all fields and upload an image.')</script>";
     }
+
     // Close database connection
     mysqli_close($conn);
 }
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -231,7 +233,7 @@ button.btn-danger:hover {
             </div>
             <div class="user--info">
                 
-            <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
+            <i class="fa fa-user" aria-hidden="true"></i><?php echo $_SESSION['username'] ?>
             </div>
         </div>
         <div class="section1">
@@ -252,93 +254,11 @@ button.btn-danger:hover {
                     <label for="tipdescription">Tip:</label>
                     <textarea id="tipdescription" name="tipdescription" required></textarea><br><br>
 
-                    <input type="submit" value="Add" style="width:120px; height:50px">
+                    <input type="submit" value="Add" style="width:120px; height:50px"></input>
                 </form>
             </div>
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    var form = document.getElementById("AddstyletipForm");
-
-                    var imageInput = document.getElementById("image");
-                    var tipdescriptionInput = document.getElementById("tipdescription");
-
-                    form.addEventListener("submit", function (event) {
-                        var imageInput = document.getElementById("image");
-                        var tipdescriptionInput = document.getElementById("tipdescription");
-                        
-                        var isValid = true;
-
-                        if (!validateImage(imageInput)) {
-                        isValid = false;
-                        }
-                        if (!validateField(tipdescriptionInput, validateDescriptionFormat)) {
-                            isValid = false;
-                        }
-
-                        if (!isValid) {
-                            event.preventDefault(); // Prevent form submission
-                        }
-                    });
-
-                    imageInput.addEventListener("change", function () {
-                        validateImage(imageInput);
-                    });
-                    tipdescriptionInput.addEventListener("blur", function () {
-                        validateField(tipdescriptionInput, validateDescriptionFormat, "*Please enter a valid description.");
-                    });
-
-                    function validateField(inputField, validationFunction, errorMessage) {
-                        var value = inputField.value.trim();
-                        if (!validationFunction(value)) {
-                            displayErrorMessage(errorMessage, inputField);
-                        } else {
-                            clearErrorMessage(inputField);
-                        }
-                    }
-
-                    function validateImage(imageInput) {
-                        var file = imageInput.files[0];
-                        var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Regular expression for allowed image extensions
-
-                        if (!file) {
-                            displayErrorMessage("*Please select an image.", imageInput);
-                            return;
-                        }
-
-                        if (!allowedExtensions.test(file.name)) {
-                            displayErrorMessage("*Supported image formats: JPEG, JPG, PNG", imageInput);
-                        } else {
-                            clearErrorMessage(imageInput);
-                        }
-                    }
-
-                    function validateDescriptionFormat(tipdescription) {
-                        return tipdescription.trim() !== '' && !/\s{2,}/.test(tipdescription);
-                    }
-
-                    // Function to display error messages
-                    function displayErrorMessage(message, inputField) {
-                        clearErrorMessage(inputField); 
-                        var errorMessageElement = document.createElement('div');
-                        errorMessageElement.classList.add('error-message');
-                        errorMessageElement.style.color = '#922B21'; 
-                        errorMessageElement.style.fontWeight = 'bold'; 
-                        errorMessageElement.style.fontSize = '13px'; 
-                        errorMessageElement.style.fontFamily = 'Sans Serif'; 
-                        errorMessageElement.textContent = message;
-                        inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
-                    }
-                      // Function to clear error messages
-                    function clearErrorMessage(inputField) {
-                        var errorMessage = inputField.parentNode.querySelector('.error-message');
-                        if (errorMessage) {
-                            errorMessage.remove();
-                        }
-                    }
-                });
-
-            </script>
+       
 
             <!-- View Products Container -->
             <div id="viewstyletip" class="form-container" style="display:none;">
@@ -410,5 +330,89 @@ button.btn-danger:hover {
     </script>
 
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("AddstyletipForm");
+        var imageInput = document.getElementById("image");
+        var tipdescriptionInput = document.getElementById("tipdescription");
+
+        form.addEventListener("submit", function (event) {
+            var isValid = true;
+
+            if (!validateImage(imageInput)) {
+                isValid = false;
+            }
+            if (!validateField(tipdescriptionInput, validateDescriptionFormat)) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+
+        imageInput.addEventListener("change", function () {
+            validateImage(imageInput);
+        });
+
+        tipdescriptionInput.addEventListener("blur", function () {
+            validateField(tipdescriptionInput, validateDescriptionFormat, "*Please enter a valid description.");
+        });
+
+        function validateField(inputField, validationFunction, errorMessage) {
+            var value = inputField.value.trim();
+            if (!validationFunction(value)) {
+                displayErrorMessage(errorMessage, inputField);
+                return false;
+            } else {
+                clearErrorMessage(inputField);
+                return true;
+            }
+        }
+
+        function validateImage(imageInput) {
+            var file = imageInput.files[0];
+            var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Regular expression for allowed image extensions
+
+            if (!file) {
+                displayErrorMessage("*Please select an image.", imageInput);
+                return false;
+            }
+
+            if (!allowedExtensions.test(file.name)) {
+                displayErrorMessage("*Supported image formats: JPEG, JPG, PNG", imageInput);
+                return false;
+            }
+
+            clearErrorMessage(imageInput);
+            return true;
+        }
+
+        function validateDescriptionFormat(tipdescription) {
+            return tipdescription.trim() !== '' && !/\s{2,}/.test(tipdescription);
+        }
+
+        // Function to display error messages
+        function displayErrorMessage(message, inputField) {
+            clearErrorMessage(inputField); 
+            var errorMessageElement = document.createElement('div');
+            errorMessageElement.classList.add('error-message');
+            errorMessageElement.style.color = '#922B21'; 
+            errorMessageElement.style.fontWeight = 'bold'; 
+            errorMessageElement.style.fontSize = '13px'; 
+            errorMessageElement.style.fontFamily = 'Sans Serif'; 
+            errorMessageElement.textContent = message;
+            inputField.parentNode.insertBefore(errorMessageElement, inputField.nextSibling);
+        }
+
+        // Function to clear error messages
+        function clearErrorMessage(inputField) {
+            var errorMessage = inputField.parentNode.querySelector('.error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+        }
+    });
+</script>
 
 </html>
