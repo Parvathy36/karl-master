@@ -131,6 +131,9 @@ button.btn-danger:hover {
             <li><a href="admin.php"><i class="fas fa-tachometer"></i>
                     <span>Dashboard</span></a>
             </li>
+            <li><a href="adminstock.php"><i class="fa fa-shopping-basket"></i>
+                    <span>Manage Stock</span></a>
+            </li>
             <li><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
@@ -142,12 +145,6 @@ button.btn-danger:hover {
             </li>
             <li class="active"><a href="adminuserrec.php"><i class="fas fa-users"></i>
                     <span>Users Record</span></a>
-            </li>
-            <li><a href="#"><i class="fas fa-question-circle"></i>
-                    <span>FAQ</span></a>
-            </li>
-            <li><a href="#"><i class="fas fa-cog"></i>
-                    <span>Settings</span></a>
             </li>
             <li class="logout"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span></a>
@@ -161,8 +158,7 @@ button.btn-danger:hover {
                 <h2>Dashboard</h2>
             </div>
             <div class="user--info">
-                <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
-                
+                <a href="adminprofile.php" style="color: black; text-decoration: none;"><i class="fa fa-user" aria-hidden="true"><span style="margin-left: 5px;"><?php echo $_SESSION['username'] ?></i></a>
             </div>
         </div>
         
@@ -174,7 +170,7 @@ button.btn-danger:hover {
             <table class="table text-start align-middle table-bordered table-hover mb-0">
                 <thead>
                     <tr class="text-dark">
-                        <th scope="col"></th>
+                        <th scope="col">Sl no.</th>
                         <th scope="col">Username</th>
                         <th scope="col">Email</th>
                         <th scope="col">Action</th>
@@ -186,18 +182,18 @@ button.btn-danger:hover {
 
                     $sql = "SELECT * FROM tbl_register WHERE username NOT LIKE 'admin' AND email NOT LIKE 'admin@example.com'";
                     $result = $conn->query($sql);
-
+                    $sl=0;
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>
-                                    <td>" . $row['uid'] . "</td>
+                                    <td> ".++$sl."</td>
                                     <td>" . $row['username'] . "</td>
                                     <td>" . $row['email'] . "</td>
                                     <td>
-                                        <form action='' method='post'>
+                                        
                                             <button type='submit' name='act' class='btn btn-sm btn-success'>Approve</button><br><br>
                                             <button type='submit' name='del' class='btn btn-sm btn-danger'>Reject</button>
-                                        </form>
+                                        
                                     </td>
                                 </tr>";
                         }

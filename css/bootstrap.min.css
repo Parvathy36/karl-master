@@ -4762,6 +4762,13 @@ tbody.collapse.show {
     padding: 1.25rem
 }
 
+.modal-dialog.modal-dialog-right {
+    right: 0;
+    margin-top: 8%;
+    margin-left: 30%; /* Adjust this value as needed */
+    max-width: 600px; /* Adjust this value as needed */
+}
+
 .card-title {
     margin-bottom: .75rem
 }
@@ -5885,7 +5892,8 @@ button.close {
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
     justify-content: space-between;
-    padding: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
     border-bottom: 1px solid #e9ecef;
     border-top-left-radius: .3rem;
     border-top-right-radius: .3rem
@@ -5906,7 +5914,9 @@ button.close {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
-    padding: 1rem
+    padding-bottom: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .modal-footer {

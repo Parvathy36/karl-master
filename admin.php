@@ -97,6 +97,9 @@ if (isset($_SESSION['username'])) {
             <li class="active"><a href="admin.php"><i class="fas fa-tachometer"></i>
                     <span>Dashboard</span></a>
             </li>
+            <li><a href="adminstock.php"><i class="fa fa-shopping-basket"></i>
+                    <span>Manage Stock</span></a>
+            </li>
             <li><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
@@ -108,12 +111,6 @@ if (isset($_SESSION['username'])) {
             </li>
             <li><a href="adminuserrec.php"><i class="fas fa-users"></i>
                     <span>Users Record</span></a>
-            </li>
-            <li><a href="#"><i class="fas fa-question-circle"></i>
-                    <span>FAQ</span></a>
-            </li>
-            <li><a href="#"><i class="fas fa-cog"></i>
-                    <span>Settings</span></a>
             </li>
             <li class="logout"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span></a>
@@ -127,10 +124,10 @@ if (isset($_SESSION['username'])) {
                 <h2>Dashboard</h2>
             </div>
             <div class="user--info">
-                
-            <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
+                <a href="adminprofile.php" style="color: black; text-decoration: none;"><i class="fa fa-user" aria-hidden="true"><span style="margin-left: 5px;"><?php echo $_SESSION['username'] ?></i></a>
             </div>
         </div>
+
         
         <!-- You can add more sections here if needed -->
         <div class="main-content">

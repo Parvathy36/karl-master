@@ -8,10 +8,43 @@ if (isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
+include "connect.php";
+$email = "";
+    // Fetch email from tbl_register based on UID
+    $uid = $_SESSION['uid'];
+    
+    $select_query = "SELECT email FROM tbl_register WHERE uid = '$uid'";
+    $result = mysqli_query($conn, $select_query);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $email = $row['email'];
+    }
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $phone = $_POST['phone'];
+    $address = $_POST['address'];
+
+
+    // Insert form data into tbl_profile
+    $insert_query = "INSERT INTO tbl_profile (firstname, lastname, phoneno, address, uid) VALUES ('$firstname', '$lastname', '$phone', '$address', '$uid')";
+
+    if (mysqli_query($conn, $insert_query)) {
+        // Insertion successful
+        echo "Profile updated successfully";
+    } else {
+        // Error handling
+        echo "Error: " . $insert_query . "<br>" . mysqli_error($conn);
+    }
+}
+
+// Close database connection
+mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="">
@@ -20,7 +53,68 @@ if (isset($_SESSION['username'])) {
     <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <!-- Title  -->
-    <title>Karl - Fashion Ecommerce Template | Cart</title>
+    <title> Aura</title>
+    <style>
+    .profilecontainer {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            padding-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            flex: 1;
+        }
+        .form-group input {
+            flex: 2;
+            margin-left: 10px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 67%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        input[type="submit"] {
+            background-color: #922D21;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #922D21;
+        }
+    </style>
 
     <!-- Favicon  -->
     <link rel="icon" href="img/core-img/favicon.ico">
@@ -31,6 +125,7 @@ if (isset($_SESSION['username'])) {
 
     <!-- Responsive CSS -->
     <link href="css/responsive.css" rel="stylesheet">
+    
 
 </head>
 
@@ -58,7 +153,7 @@ if (isset($_SESSION['username'])) {
                             <li><a href="#">Scarves &amp; Stoles</a></li>
                         </ul>
                     </li>
-                   
+                    
                     <!-- Single Item -->
                     <li data-toggle="collapse" data-target="#bags" class="collapsed">
                         <a href="#">Accessories <span class="arrow"></span></a>
@@ -131,7 +226,6 @@ if (isset($_SESSION['username'])) {
                                     <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -167,12 +261,12 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
                                             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
-                                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                                     <a class="dropdown-item" href="uprofile.php">Profile</a>
-                                                     <a class="dropdown-item" href="#">Wishlist</a>
-                                                     <a class="dropdown-item" href="logout.php">Logout</a>
-                                                </div>
-                                            </li>
+                                              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                                   <a class="dropdown-item" href="uprofile.php">Profile</a>
+                                                   <a class="dropdown-item" href="#">Wishlist</a>
+                                                   <a class="dropdown-item" href="logout.php">Logout</a>
+                                              </div>
+                                            </li>  
                                         </ul>
                                     </div>
                                 </nav>
@@ -184,96 +278,43 @@ if (isset($_SESSION['username'])) {
         </header>
         <!-- ****** Header Area End ****** -->
 
-        <!-- ****** Top Discount Area End ****** -->
 
-        <!-- ****** Cart Area Start ****** -->
-        <div class="cart_area section_padding_100 clearfix">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="cart-table clearfix">
-                            <table class="table table-responsive">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Price</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="cart_product_img d-flex align-items-center">
-                                            <a href="#"><img src="img/product-img/dresses1.jpg" alt="Product"></a>
-                                            <h6>Monochrome Gardenia Dress</h6>
-                                        </td>
-                                        <td class="price"><span>₹3,290</span></td>
-                                        <td class="qty">
-                                            <div class="quantity">
-                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="99" name="quantity" value="1">
-                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                            </div>
-                                        </td>
-                                        <td class="total_price"><span>₹3,290</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="cart_product_img d-flex align-items-center">
-                                            <a href="#"><img src="img/product-img/tops.jpg" alt="Product"></a>
-                                            <h6>Cloudy Day Cotton Shirt</h6>
-                                        </td>
-                                        <td class="price"><span>₹1,690</span></td>
-                                        <td class="qty">
-                                            <div class="quantity">
-                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="99" name="quantity" value="1">
-                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                            </div>
-                                        </td>
-                                        <td class="total_price"><span>₹1,690</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+        <!-- body content -->
 
-                        <div class="cart-footer d-flex mt-30">
-                            <div class="back-to-shop w-50">
-                                <a href="shop-grid-left-sidebar.html">Continue shopping</a>
-                            </div>
-                            <div class="update-checkout w-50 text-right">
-                                <a href="#">Update cart</a>
-                            </div>
-                        </div>
+        <div class="profilecontainer">
+        <h2 style="font-family: Garamond;">Profile</h2>
 
-                    </div>
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label for="firstname">First Name:</label>
+                    <input type="text" id="firstname" name="firstname" required>
                 </div>
 
-                <div class="row">
-                    <div class="col-12 col-md-6 col-lg-4">
-                        
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-4">
-                       
-                    </div>
-                    <div class="col-12 col-lg-4">
-                        <div class="cart-total-area mt-70">
-                            <div class="cart-page-heading">
-                                <h5>Cart total</h5>
-                                <p>Final info</p>
-                            </div>
-
-                            <ul class="cart-total-chart">
-                                <li><span>Subtotal</span> <span>$59.90</span></li>
-                                <li><span>Shipping</span> <span>Free</span></li>
-                                <li><span><strong>Total</strong></span> <span><strong>$59.90</strong></span></li>
-                            </ul>
-                            <a href="checkout.php" class="btn karl-checkout-btn">Proceed to checkout</a>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="lastname">Last Name:</label>
+                    <input type="text" id="lastname" name="lastname" required>
                 </div>
-            </div>
+                
+                <div class="form-group">    
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="<?php echo $email; ?>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <textarea id="address" name="address" rows="3" cols="30" required></textarea>
+                </div>
+
+                <input type="submit" value="Update">
+            </form>
         </div>
-        <!-- ****** Cart Area End ****** -->
+        <!-- end body content -->
+
 
         <!-- ****** Footer Area Start ****** -->
         <footer class="footer_area">
@@ -292,11 +333,11 @@ if (isset($_SESSION['username'])) {
                     <div class="col-12 col-sm-6 col-md-3 col-lg-2">
                         <div class="single_footer_area">
                             <ul class="footer_widget_menu">
-                                <li><a href="#">About</a></li>
-                                <li><a href="#">Blog</a></li>
+                                <li><a href="about.php">About</a></li>
+                                <li><a href="blog.php">Blog</a></li>
                                 <li><a href="#">Faq</a></li>
                                 <li><a href="#">Returns</a></li>
-                                <li><a href="#">Contact</a></li>
+                                <li><a href="contact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>

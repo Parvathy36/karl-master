@@ -203,7 +203,7 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                                     <a class="dropdown-item" href="#">Profile</a>
+                                                     <a class="dropdown-item" href="uprofile.php">Profile</a>
                                                      <a class="dropdown-item" href="#">Wishlist</a>
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>

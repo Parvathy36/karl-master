@@ -20,7 +20,7 @@ if (isset($_SESSION['username'])) {
     <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <!-- Title  -->
-    <title>Karl - Fashion Ecommerce Template | Product Details</title>
+    <title>Karl - Fashion Ecommerce Template | Shop</title>
 
     <!-- Favicon  -->
     <link rel="icon" href="img/core-img/favicon.ico">
@@ -33,35 +33,6 @@ if (isset($_SESSION['username'])) {
     <link href="css/responsive.css" rel="stylesheet">
 
 </head>
-<style>
-    .custom-list {
-    counter-reset: custom-counter;
-    list-style-type: none; 
-}
-
-.custom-list li {
-    position: relative;
-    padding-left: 20px;
-    margin-bottom: 10px;
-}
-
-.custom-list li::before {
-    content: counter(custom-counter);
-    counter-increment: custom-counter;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-color: #922D21;
-    color: #fff;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    border-radius: 50%;
-    font-weight: bold;
-}
-
-</style>
 
 <body>
     <div class="catagories-side-menu">
@@ -87,7 +58,7 @@ if (isset($_SESSION['username'])) {
                             <li><a href="#">Scarves &amp; Stoles</a></li>
                         </ul>
                     </li>
-                   
+                
                     <!-- Single Item -->
                     <li data-toggle="collapse" data-target="#bags" class="collapsed">
                         <a href="#">Accessories <span class="arrow"></span></a>
@@ -113,6 +84,7 @@ if (isset($_SESSION['username'])) {
 
     <div id="wrapper">
 
+         
 
         <!-- ****** Header Area Start ****** -->
         <header class="header_area bg-img background-overlay-white" style="background-image: url(img/bg-img/bg-11.jpg);">
@@ -197,7 +169,7 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                                     <a class="dropdown-item" href="uprofile.php">Profile</a>
+                                                     <a class="dropdown-item" href="#">Profile</a>
                                                      <a class="dropdown-item" href="#">Wishlist</a>
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>
@@ -213,273 +185,240 @@ if (isset($_SESSION['username'])) {
         </header>
         <!-- ****** Header Area End ****** -->
 
-        <!-- <<<<<<<<<<<<<<<<<<<< Breadcumb Area Start <<<<<<<<<<<<<<<<<<<< -->
-        <div class="breadcumb_area">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <ol class="breadcrumb d-flex align-items-center">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Dresses</a></li>
-                            <li class="breadcrumb-item active">Long Dress</li>
-                        </ol>
-                        <!-- btn -->
-                        <a href="shop.php" class="backToHome d-block"><i class="fa fa-angle-double-left"></i> Back to Category</a>
+        <!-- ****** Quick View Modal Area Start ****** -->
+        <div class="modal fade" id="quickview" tabindex="-1" role="dialog" aria-labelledby="quickview" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+                    <div class="modal-body">
+                        <div class="quickview_body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-12 col-lg-5">
+                                        <div class="quickview_pro_img">
+                                            <img src="img/product-img/product-1.jpg" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-7">
+                                        <div class="quickview_pro_des">
+                                            <h4 class="title">Boutique Silk Dress</h4>
+                                            <div class="top_seller_product_rating mb-15">
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                            </div>
+                                            <h5 class="price">$120.99 <span>$130</span></h5>
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia expedita quibusdam aspernatur, sapiente consectetur accusantium perspiciatis praesentium eligendi, in fugiat?</p>
+                                            <a href="product-details.php">View Full Product Details</a>
+                                        </div>
+                                        <!-- Add to Cart Form -->
+                                        <form class="cart" method="post">
+                                            <div class="quantity">
+                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
+
+                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="12" name="quantity" value="1">
+
+                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                            </div>
+                                            <button type="submit" name="addtocart" value="5" class="cart-submit">Add to cart</button>
+                                            <!-- Wishlist -->
+                                            <div class="modal_pro_wishlist">
+                                                <a href="wishlist.php" target="_blank"><i class="ti-heart"></i></a>
+                                            </div>
+                                        </form>
+
+                                        <div class="share_wf mt-30">
+                                            <p>Share With Friend</p>
+                                            <div class="_icon">
+                                                <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                                <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                                <a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                                                <a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- <<<<<<<<<<<<<<<<<<<< Breadcumb Area End <<<<<<<<<<<<<<<<<<<< -->
+        <!-- ****** Quick View Modal Area End ****** -->
 
-        <!-- <<<<<<<<<<<<<<<<<<<< Single Product Details Area Start >>>>>>>>>>>>>>>>>>>>>>>>> -->
-        <?php
-// Include your database connection file here
-include 'connect.php';
-
-// Function to fetch product details from the database
-function getProductDetails($p_id, $conn) {
-    // Replace this with your actual database query to fetch product details
-    $query = "SELECT * FROM tbl_products WHERE p_id = $p_id";
-    $result = $conn->query($query);
-    $product_details = mysqli_fetch_assoc($result);
-    return $product_details;
-    // Make sure to handle database connection and error handling appropriately
-}
-
-// Function to fetch available sizes for a product from tbl_stock
-function getProductSizes($p_id, $conn) {
-    $sizes = array(); // Initialize an array to store sizes
-    $query = "SELECT size FROM tbl_stock WHERE p_id = $p_id";
-    $result = $conn->query($query);
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $sizes[] = $row['size']; // Add size to the array
-        }
-    }
-    return $sizes;
-}
-
-// Check if the product ID is provided in the URL
-if (isset($_GET['p_id'])) {
-    $p_id = $_GET['p_id'];
-
-    // Fetch product details from the database using the product ID
-    $product_details = getProductDetails($p_id, $conn);
-
-    // Check if product details are fetched successfully
-    if ($product_details) {
-?>
-        <section class="single_product_details_area section_padding_0_100">
+        <section class="shop_grid_area section_padding_100">
             <div class="container">
                 <div class="row">
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="shop_sidebar_area">
+                           
+                            <div class="widget catagory mb-50">
+                                <!--  Side Nav  -->
+                                <div class="nav-side-menu">
+                                    <h6 class="mb-0">Catagories</h6>
+                                    <div class="menu-list">
+                                        <ul id="menu-content2" class="menu-content collapse out">
+                                            <!-- Single Item -->
+                                            <?php
+                                            include('connect.php');
+                                            // Fetch categories from tbl_category
+                                            $query_categories = "SELECT * FROM tbl_category";
+                                                $result_categories = mysqli_query($conn, $query_categories);
 
-                    <div class="col-12 col-md-6">
-                        <div class="single_product_thumb">
-                            <div id="product_details_slider" class="carousel slide" data-ride="carousel">
+                                                // Loop through categories
+                                                while ($row_category = mysqli_fetch_assoc($result_categories)) {
+                                                    echo '<li data-toggle="collapse" data-target="#' . $row_category['category_name'] . '">';
+                                                    echo '<a href="womenwear.php">' . $row_category['category_name'] . '</a>';
+                                                    echo '<ul class="sub-menu collapse show" id="' . $row_category['category_name'] . '">';
 
-                            <ol class="carousel-indicators">
-                                <li class="active" data-target="#product_details_slider" data-slide-to="0" style="background-image: url(img/product-img/<?php echo $product_details['image']; ?>);">
-                                </li>
-                            </ol>
+                                                    // Fetch subcategories associated with the current category
+                                                    $query_subcategories = "SELECT * FROM tbl_subcate WHERE category_id = " . $row_category['category_id'];
+                                                    $result_subcategories = mysqli_query($conn, $query_subcategories);
 
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <a class="gallery_img" href="img/product-img/<?php echo $product_details['image']; ?>">
-                                        <img class="d-block w-100" src="img/product-img/<?php echo $product_details['image']; ?>" alt="First slide">
-                                    </a>
+                                                    // Loop through subcategories
+                                                    while ($row_subcategory = mysqli_fetch_assoc($result_subcategories)) {
+                                                        echo '<li><a href="#">' . $row_subcategory['subcategory_name'] . '</a></li>';
+                                                    }
+
+                                                    echo '</ul>';
+                                                    echo '</li>';
+                                                }
+                                                ?>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
 
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <div class="single_product_desc">
-
-                            <h4 class="title"><a href="#"><?php echo $product_details['p_name']; ?></a></h4>
-
-                            <h4 class="price">₹<?php echo $product_details['price']; ?></h4>
-
-                            <p class="available">Available: <span class="text-muted">In Stock</span></p>
-
-                            <div class="single_product_ratings mb-15">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star-o" aria-hidden="true"></i>
-                            </div>
-
-                            <div class="widget size mb-50">
-                                <h6 class="widget-title">Size</h6>
+                            <div class="widget price mb-50">
+                                <h6 class="widget-title mb-30">Filter by Price</h6>
                                 <div class="widget-desc">
-                                    <ul>
-                                    <?php
-                                        // Fetch available sizes for the product
-                                        $sizes = getProductSizes($p_id, $conn);
-                                        // Display each size
-                                        foreach ($sizes as $size) {
-                                            echo "<li><a href='#'>$size</a></li> ";
-                                        }
-                                    ?>
+                                    <div class="slider-range">
+                                        <div data-min="0" data-max="10000" data-unit="₹" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="0" data-value-max="10000" data-label-result="Price:">
+                                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
+                                        </div>
+                                        <div class="range-price">Price: 0 - 10000</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget color mb-70">
+                                <h6 class="widget-title mb-30">Filter by Color</h6>
+                                <div class="widget-desc">
+                                    <ul class="d-flex justify-content-between">
+                                        <li class="gray"><a href="#"><span>(3)</span></a></li>
+                                        <li class="red"><a href="#"><span>(25)</span></a></li>
+                                        <li class="yellow"><a href="#"><span>(112)</span></a></li>
+                                        <li class="green"><a href="#"><span>(72)</span></a></li>
+                                        <li class="teal"><a href="#"><span>(9)</span></a></li>
+                                        <li class="cyan"><a href="#"><span>(29)</span></a></li>
                                     </ul>
                                 </div>
                             </div>
 
-                            <!-- Add to Cart Form -->
-                            <form class="cart clearfix mb-50 d-flex" method="post">
-                                <div class="quantity">
-                                    <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                    <input type="number" class="qty-text" id="qty" step="1" min="1" max="12" name="quantity" value="1">
-                                    <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                            <div class="widget size mb-50">
+                                <h6 class="widget-title mb-30">Filter by Size</h6>
+                                <div class="widget-desc">
+                                    <ul class="d-flex justify-content-between">
+                                        <li><a href="#">XS</a></li>
+                                        <li><a href="#">S</a></li>
+                                        <li><a href="#">M</a></li>
+                                        <li><a href="#">L</a></li>
+                                        <li><a href="#">XL</a></li>
+                                        <li><a href="#">XXL</a></li>
+                                    </ul>
                                 </div>
-                                <button type="submit" name="addtocart" value="5" class="btn cart-submit d-block">Add to cart</button>
-                            </form>
+                            </div>
 
-                            <div id="accordion" role="tablist">
-                                <div class="card">
-                                    <div class="card-header" role="tab" id="headingOne">
-                                        <h6 class="mb-0">
-                                            <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Information</a>
-                                        </h6>
-                                    </div>
+                            <div class="widget recommended">
+                                <h6 class="widget-title mb-30">Recommended</h6>
 
-                                    <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-                                        <div class="card-body">
-                                            <p><?php echo $product_details['description']; ?></p>
+                                <div class="widget-desc">
+                                    <!-- Single Recommended Product -->
+                                    <div class="single-recommended-product d-flex mb-30">
+                                        <div class="single-recommended-thumb mr-3">
+                                            <img src="img/product-img/dresses1.jpg" alt="">
+                                        </div>
+                                        <div class="single-recommended-desc">
+                                            <h6>Monochrome Gardenia Dress</h6>
+                                            <p>₹3,290</p>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header" role="tab" id="headingTwo">
-                                        <h6 class="mb-0">
-                                            <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Cart Details</a>
-                                        </h6>
-                                    </div>
-                                    <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
-                                        <div class="card-body">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo quis in veritatis officia inventore, tempore provident dignissimos nemo, nulla quaerat. Quibusdam non, eos, voluptatem reprehenderit hic nam! Laboriosam, sapiente! Praesentium.</p>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia magnam laborum eaque.</p>
+                                    <!-- Single Recommended Product -->
+                                    <div class="single-recommended-product d-flex mb-30">
+                                        <div class="single-recommended-thumb mr-3">
+                                            <img src="img/product-img/scarfs1.jpg" alt="">
+                                        </div>
+                                        <div class="single-recommended-desc">
+                                            <h6>Cozy Days Scarf</h6>
+                                            <p>₹1,260</p>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-header" role="tab" id="headingThree">
-                                        <h6 class="mb-0">
-                                            <a class="collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">shipping &amp; Returns</a>
-                                        </h6>
-                                    </div>
-                                    <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
-                                        <div class="card-body">
-                                            <p>Standard Delivery in 2-8 working days <br>
-                                            Free shipping on orders of INR 1499 and above</p>
-                                            <p>This item is eligible for free return within 30 days of delivery.</p>
-                                            <p><b>Note:</b> We do not exchange products online. If something is not right, you may return the merchandise and place a new order. Alternatively, you can exchange the product for another style or size at any of our exclusive stores.</p>
-                                            <a class="size-chart__anchor body-type--centi font-weight-400" style="color: #1e1e1e; font-weight: bold; font-family: Georgia; cursor: pointer;" data-toggle="modal" data-target="#moreInfoModal">More Info</a>
+                                    <!-- Single Recommended Product -->
+                                    <div class="single-recommended-product d-flex">
+                                        <div class="single-recommended-thumb mr-3">
+                                            <img src="img/product-img/tops.jpg" alt="">
+                                        </div>
+                                        <div class="single-recommended-desc">
+                                            <h6>Cloudy Day Cotton Shirt</h6>
+                                            <p>₹1,690</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+                    </div>
+
+                    <div class="col-12 col-md-8 col-lg-9">
+                        <div class="shop_grid_product_area">
+                            <div class="row">
+                            <?php
+                            include('connect.php');
+$sql11 = "SELECT * FROM tbl_products where category_id = 1";
+$result = $conn->query($sql11);
+$productCount = 0; // Counter for displayed products
+while ($row = $result->fetch_assoc() and $productCount < 9) {
+    $productCount++;
+    ?>
+    <div class="col-12 col-sm-6 col-lg-4 single_gallery_item wow fadeInUpBig" data-wow-delay="0.2s">
+        <div class="product-img">
+            <img src="img/product-img/<?php echo $row['image']; ?>" alt="">
+            <div class="product-quicview">
+                <a href="#" data-toggle="modal" data-target="#quickview"><i class="ti-plus"></i></a>
+            </div>
+        </div>
+        <div class="product-description">
+            <h4 class="product-price">₹<?php echo $row['price']; ?></h4>
+            <p><?php echo $row['p_name']; ?></p>
+            <a href="#" class="add-to-cart-btn">ADD TO CART</a>
+        </div>
+    </div>
+<?php
+}
+?>
+
+                               
+
+                        <div class="shop_pagination_area wow fadeInUp" data-wow-delay="1.1s">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination pagination-sm">
+                                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </section>
-        <?php
-    } else {
-        // Product not found or error fetching details
-        echo "Product not found.";
-    }
-} else {
-    // If no product ID is provided in the URL
-    echo "No product ID specified.";
-}
-?>
-        <!-- <<<<<<<<<<<<<<<<<<<< Single Product Details Area End >>>>>>>>>>>>>>>>>>>>>>>>> -->
-
-        <!-- more info -->
-        <div class="modal fade" id="moreInfoModal" tabindex="-1" role="dialog" aria-labelledby="moreInfoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-right" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="moreInfoModalLabel">How it works - Returns & Exchanges</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="lead">Returning items is easy with our hassle-free process. Here's how it works:</p>
-                        <ol class="custom-list">
-                            <li>Request Return: Login and go to Account > My Orders > Return Item and select the products you wish to return along with the reason for return.</li>
-                            <li>Return Pickup: Our delivery agent will pick up the package within 1-2 business days. Please ensure products are unused and tags are intact.</li>
-                            <li>Refund: Refund will be processed on receiving the product, it may take 5-7 days to get credited at its source.</li>
-                        </ol>
-                        <p class="mb-0"><strong>Note:</strong> We do not exchange products online. If something is not right, you may return the merchandise and place a new order. Alternatively, you can exchange the product for another style or size at any of our exclusive stores.</p>
-                        <p class="mt-2">To learn about international returns please refer to our <a href="#">return policy</a>.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-        <!-- more info -->
-
-        
-
-        <section class="you_may_like_area clearfix">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="section_heading text-center">
-                            <h2>related Products</h2>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                
-                    <div class="col-12">
-                    <?php
-                    include('connect.php');
-                    $sql11 = "SELECT * FROM tbl_products";
-                    $result = $conn->query($sql11);
-                    while ($row = $result->fetch_assoc()){
-                        ?>
-                        <div class="you_make_like_slider owl-carousel">
-                        
-                            <!-- Single gallery Item -->
-                            <div class="single_gallery_item">
-                                <!-- Product Image -->
-                                <div class="product-img">
-                                    <img src="img/product-img/<?php echo $row['image']; ?>" alt="">
-                                    <div class="product-quicview">
-                                        <a href="#" data-toggle="modal" data-target="#quickview"><i class="ti-plus"></i></a>
-                                    </div>
-                                </div>
-                                <!-- Product Description -->
-                                <div class="product-description">
-                                    <h4 class="product-price">₹<?php echo $row['price']; ?></h4>
-                                    <p><?php echo $row['p_name']; ?></p>
-                                    <!-- Add to Cart -->
-                                    <a href="#" class="add-to-cart-btn">ADD TO CART</a>
-                                </div>
-                            </div>
-
-                            
-                        </div>
-                        <?php
-}
-?>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>    
 
         <!-- ****** Footer Area Start ****** -->
         <footer class="footer_area">

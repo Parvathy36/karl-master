@@ -12,14 +12,23 @@ if (isset($_SESSION['username'])) {
 <?php
 require_once "connect.php";
 
-
-
 if(isset($_POST['Add'])) {
     // Check if required fields are not empty
-    if (!empty($_POST['productName']) && !empty($_POST['description']) && !empty($_POST['quantity']) && !empty($_POST['price']) && !empty($_POST['category'])) {
+    if (!empty($_POST['productName']) && !empty($_POST['description']) && !empty($_POST['price']) && !empty($_POST['category']) && isset($_FILES['image'])) {
+        // Handle file upload for the image
+        $image_name = $_FILES['image']['name'];
+        $image_tmp = $_FILES['image']['tmp_name'];
+        $image_size = $_FILES['image']['size'];
+
+        // Open the file for binary reading
+        $fp = fopen($image_tmp, 'r');
+        $image_data = fread($fp, filesize($image_tmp));
+        $image_data = addslashes($image_data);
+        fclose($fp);
+
+        // Extract other form data
         $productName = mysqli_real_escape_string($conn, $_POST['productName']);
         $description = mysqli_real_escape_string($conn, $_POST['description']);
-        $quantity = (int)$_POST['quantity'];
         $price = (float)$_POST['price'];
         $category_id = (int)$_POST['category'];
         $subcategory_id = null; // Initialize subcategory_id
@@ -32,22 +41,15 @@ if(isset($_POST['Add'])) {
             }
         }
 
-        // Handle file upload for the image
-        if(isset($_FILES['image']['name'])){
-            $image_name = $_FILES['image']['name'];
-            $target_dir = "img/product-img/";
-            $target_file = $target_dir . basename($image_name);
-        }
-
         // Prepare SQL statement with placeholders for the image
-        $sql = "INSERT INTO tbl_products (p_name, description, qty, price, category_id, image, subcategory_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO tbl_products (p_name, description, price, category_id, image, subcategory_id)
+                VALUES (?, ?, ?, ?, ?, ?)";
 
         // Prepare the statement
         $stmt = mysqli_prepare($conn, $sql);
         if ($stmt) {
             // Bind parameters to the statement
-            mysqli_stmt_bind_param($stmt, "ssiiisi", $productName, $description, $quantity, $price, $category_id, $image_name, $subcategory_id);
+            mysqli_stmt_bind_param($stmt, "ssisis", $productName, $description, $price, $category_id, $image_data, $subcategory_id);
 
             // Execute the statement
             if (mysqli_stmt_execute($stmt)) {
@@ -63,12 +65,6 @@ if(isset($_POST['Add'])) {
         $alert_message = 'Error: Required fields are empty.';
     }
 }
-
-// JavaScript code for displaying alert message
-// echo "<script>";
-// echo "alert('$alert_message');";
-// echo "window.location.href = 'adminproductrec.php';";
-// echo "</script>";
 ?>
 
 <?php
@@ -281,6 +277,9 @@ button.btn-danger:hover {
             <li><a href="admin.php"><i class="fas fa-tachometer"></i>
                     <span>Dashboard</span></a>
             </li>
+            <li><a href="adminstock.php"><i class="fa fa-shopping-basket"></i>
+                    <span>Manage Stock</span></a>
+            </li>
             <li class="active"><a href="adminproductrec.php"><i class="fas fa-store"></i>
                     <span>Manage Products</span></a>
             </li>
@@ -293,26 +292,19 @@ button.btn-danger:hover {
             <li><a href="adminuserrec.php"><i class="fas fa-users"></i>
                     <span>Users Record</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-question-circle"></i>
-                    <span>FAQ</span></a>
-            </li>
-            <li><a href="#"><i class="fas fa-cog"></i>
-                    <span>Settings</span></a>
-            </li>
             <li class="logout"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span></a>
             </li>
         </ul>
     </div>
     <div class="main--content">
-        <div class="header--wrapper" >
+        <div class="header--wrapper">
             <div class="header--title">
                 <span>Admin</span>
                 <h2>Dashboard</h2>
             </div>
             <div class="user--info">
-                
-            <i class="fa fa-user" aria-hidden="true"></i><?php echo $user ?>
+                <a href="adminprofile.php" style="color: black; text-decoration: none;"><i class="fa fa-user" aria-hidden="true"><span style="margin-left: 5px;"><?php echo $_SESSION['username'] ?></i></a>
             </div>
         </div>
         <div class="section1">
@@ -326,48 +318,44 @@ button.btn-danger:hover {
             <br><br>
 
             <!-- Add Product Form Container -->
-            <div id="addProductForm" class="form-container">
-                <h4 style="color:#922B21">Add Product</h4><br>
-                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" id="AddProductForm" method="POST" enctype="multipart/form-data">
+<div id="addProductForm" class="form-container">
+    <h4 style="color:#922B21">Add Product</h4><br>
+    <form action="#" id="AddProductForm" method="POST" enctype="multipart/form-data">
         <label for="productName">Product Name:</label>
         <input type="text" id="productName" name="productName" required><br><br>
 
         <label for="description">Description:</label>
         <textarea id="description" name="description" required></textarea><br><br>
 
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" min="1" required><br><br>
-
         <label for="price">Price:</label>
         <input type="number" id="price" name="price" step="0.01" min="0" required><br><br>
 
         <label for="category">Category:</label>
-            <select id="category" name="category" required onchange="toggleSubcategories()">
-                <option value="">Select Category</option>
-                <?php foreach ($categories as $categoryId => $category) { ?>
-                    <option value="<?php echo $categoryId; ?>"><?php echo $category['category_name']; ?></option>
-                <?php } ?>
-            </select><br><br>
-
+        <select id="category" name="category" required onchange="toggleSubcategories()">
+            <option value="">Select Category</option>
             <?php foreach ($categories as $categoryId => $category) { ?>
-                <div id="Subcategories<?php echo $categoryId; ?>" class="subcategories" style="display: none;">
-                    <label for="Subcategory<?php echo $categoryId; ?>">Subcategory:</label>
-                    <select id="Subcategory<?php echo $categoryId; ?>" name="Subcategory<?php echo $categoryId; ?>">
-                        <option value="">Select Subcategory</option>
-                        <?php foreach ($category['subcategories'] as $subcategory) { ?>
-                            <option value="<?php echo $subcategory['subcategory_id']; ?>"><?php echo $subcategory['subcategory_name']; ?></option>
-                        <?php } ?>
-                    </select><br><br>
-                </div>
+                <option value="<?php echo $categoryId; ?>"><?php echo $category['category_name']; ?></option>
             <?php } ?>
+        </select><br><br>
+
+        <?php foreach ($categories as $categoryId => $category) { ?>
+            <div id="Subcategories<?php echo $categoryId; ?>" class="subcategories" style="display: none;">
+                <label for="Subcategory<?php echo $categoryId; ?>">Subcategory:</label>
+                <select id="Subcategory<?php echo $categoryId; ?>" name="Subcategory<?php echo $categoryId; ?>">
+                    <option value="">Select Subcategory</option>
+                    <?php foreach ($category['subcategories'] as $subcategory) { ?>
+                        <option value="<?php echo $subcategory['subcategory_id']; ?>"><?php echo $subcategory['subcategory_name']; ?></option>
+                    <?php } ?>
+                </select><br><br>
+            </div>
+        <?php } ?>
 
         <label for="image">Product Image:</label>
         <input type="file" id="image" name="image" accept="image/*" required><br><br>
 
         <input type="submit" value="Add" name="Add" style="width:120px; height:50px">
     </form>
-            </div>
-
+</div>
             <!-- View Products Container -->
 <div id="viewProducts" class="products-container">
     <h4 style="color:#922B21">View Products</h4><br>
@@ -377,11 +365,11 @@ button.btn-danger:hover {
             <th>Sl no.</th>
             <th>Product Name</th>
             <th>Description</th>
-            <th>Quantity</th>
             <th>Price</th>
             <th>Category</th>
             <th>Subcategory</th>
-            <th>Image</th> <!-- New th for the product image -->
+            <th>Image</th> 
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         <!-- Fetch products from the database and display them in the table -->
@@ -390,9 +378,9 @@ button.btn-danger:hover {
         
         // Perform SQL query to fetch products
         $sql = "SELECT 
+            p.p_id,
             p.p_name, 
             p.description, 
-            p.qty, 
             p.price, 
             c.category_name, 
             s.subcategory_name, 
@@ -409,20 +397,23 @@ button.btn-danger:hover {
                         <td> ".++$sl."</td>
                         <td>" . $row['p_name'] . "</td>
                         <td>" . $row['description'] . "</td>
-                        <td>" . $row['qty'] . "</td>
                         <td>₹" . $row['price'] . "</td>
                         <td>" . $row['category_name'] . "</td>                                                  
                         <td>" . $row['subcategory_name'] . "</td>
-                        <td><img src='img/product-img/" . $row['image'] . "' width='100' height='135'></td> <!-- Display image -->
-        
+                        <td><img src='img/product-img/" . $row['image'] . "' width='100' height='135'></td>
+                        <td> </td>
                         <td>
-                            <form action='' method='post'>
-                                <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
-                                <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
-                            </form>
-                        </td>
-                      </tr>";
-            }
+                        <a href='admineditproduct.php?p_id=" . $row['p_id'] . "'>
+                            <button name='act' class='btn btn-sm btn-success'>
+                                <i class='fa fa-pencil' aria-hidden='true'></i>
+                            </button>
+                        </a><br><br>
+                        <button type='submit' name='del' class='btn btn-sm btn-danger'>
+                            <i class='fa fa-trash' aria-hidden='true'></i>
+                        </button>
+                    </td>
+                  </tr>";
+        }
         } else {
             echo "<tr><td colspan='7'>No products found</td></tr>";
         }
@@ -479,10 +470,10 @@ if(isset($_POST['addcate'])) {
 }
 
 // JavaScript code for displaying alert message
-echo "<script>";
-echo "alert('$alert_message');";
-echo "window.location.href = 'adminproductrec.php';";
-echo "</script>";
+// echo "<script>";
+// echo "alert('$alert_message');";
+// echo "window.location.href = 'adminproductrec.php';";
+// echo "</script>";
 ?>
 
 
@@ -581,10 +572,10 @@ mysqli_close($conn);
                         <td> ".++$sl."</td>
                         <td>" . $row['category_name'] . "</td>
                         <td>
-                            <form action='' method='post'>
+                            
                                 <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
                                 <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
-                            </form>
+                            
                         </td>
                     </tr>";
             }
@@ -614,10 +605,10 @@ mysqli_close($conn);
                         <td>" . $row['subcategory_name'] . "</td>
                         <td>" . $row['category_name'] . "</td>
                         <td>
-                            <form action='' method='post'>
+                            
                                 <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
                                 <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
-                            </form>
+                            
                         </td>
                     </tr>";
             }
@@ -692,7 +683,7 @@ mysqli_close($conn);
     form.addEventListener("submit", function (event) {
         var productNameInput = document.getElementById("productName");
         var descriptionInput = document.getElementById("description");
-        var quantityInput = document.getElementById("quantity");
+        
         var priceInput = document.getElementById("price");
         var categoryInput = document.getElementById("category");
         var imageInput = document.getElementById("image");
@@ -703,9 +694,6 @@ mysqli_close($conn);
             isValid = false;
         }
         if (!validateField(descriptionInput, validateDescriptionFormat, "*Please enter a valid description.")) {
-            isValid = false;
-        }
-        if (!validateField(quantityInput, validateQuantityFormat, "*Please enter a valid quantity.")) {
             isValid = false;
         }
         if (!validateField(priceInput, validatePriceFormat, "*Please enter a valid price.")) {
@@ -726,7 +714,6 @@ mysqli_close($conn);
     var fieldsToValidate = [
         { input: document.getElementById("productName"), validationFunction: validateProductNameFormat, errorMessage: "*Please enter a valid product name." },
         { input: document.getElementById("description"), validationFunction: validateDescriptionFormat, errorMessage: "*Please enter a valid description." },
-        { input: document.getElementById("quantity"), validationFunction: validateQuantityFormat, errorMessage: "*Please enter a valid quantity." },
         { input: document.getElementById("price"), validationFunction: validatePriceFormat, errorMessage: "*Please enter a valid price." },
         { input: document.getElementById("category"), validationFunction: validateCategoryFormat, errorMessage: "*Please select a category." },
         { input: document.getElementById("image"), validationFunction: validateImage, errorMessage: "*Please select an image." }
@@ -794,22 +781,28 @@ mysqli_close($conn);
         return description.trim() !== '' && !/\s{2,}/.test(description);
     }
 
-    // Function to validate the format of the quantity
-function validateQuantityFormat(quantity) {
-    // Check if the quantity is a valid positive integer and has less than 6 digits
-    return /^\d{1,5}$/.test(quantity) && Number.isInteger(parseFloat(quantity)) && parseInt(quantity) > 0;
-}
-
 
     function validatePriceFormat(price) {
-        return !isNaN(price) && parseFloat(price) > 0;
+    // Regular expression to match the price format
+    var priceRegex = /^(?!0\d)(\d{1,5})(\.\d{2})?$/;
+
+    // Check if the price matches the pattern and is greater than 0
+    return priceRegex.test(price) && parseFloat(price) > 0;
     }
+
+    // Test cases
+    console.log(validatePriceFormat("123.45")); // true
+    console.log(validatePriceFormat("0.12"));   // false (leading zero not allowed)
+    console.log(validatePriceFormat("00.12"));  // false (leading zero not allowed)
+    console.log(validatePriceFormat("123456")); // false (more than 5 digits)
+    console.log(validatePriceFormat("123"));    // true
+    console.log(validatePriceFormat("1.234"));  // false (more than 2 decimal places)
 
     function validateCategoryFormat(category) {
         return category !== "";
     }
 
-});
+    });
 
 
 
