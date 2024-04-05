@@ -10,15 +10,34 @@ if (isset($_SESSION['username'])) {
 }
 include "connect.php";
 $email = "";
-    // Fetch email from tbl_register based on UID
-    $uid = $_SESSION['uid'];
-    
-    $select_query = "SELECT email FROM tbl_register WHERE uid = '$uid'";
-    $result = mysqli_query($conn, $select_query);
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        $email = $row['email'];
-    }
+// Fetch email from tbl_register based on UID
+$uid = $_SESSION['uid'];
+
+$select_query = "SELECT email FROM tbl_register WHERE uid = '$uid'";
+$result = mysqli_query($conn, $select_query);
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $email = $row['email'];
+}
+
+// Initialize variables to avoid warnings
+$firstname = "";
+$lastname = "";
+$phone = "";
+$address = "";
+
+// Retrieve existing profile data from tbl_profile
+$select_profile_query = "SELECT * FROM tbl_profile WHERE uid = '$uid'";
+$profile_result = mysqli_query($conn, $select_profile_query);
+if ($profile_result && mysqli_num_rows($profile_result) > 0) {
+    $profile_row = mysqli_fetch_assoc($profile_result);
+    $firstname = $profile_row['firstname'];
+    $lastname = $profile_row['lastname'];
+    $phone = $profile_row['phoneno'];
+    $address = $profile_row['address'];
+}
+
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
@@ -27,16 +46,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['phone'];
     $address = $_POST['address'];
 
+    // Update form data in tbl_profile
+    $update_query = "UPDATE tbl_profile SET firstname='$firstname', lastname='$lastname', phoneno='$phone', address='$address' WHERE uid='$uid'";
 
-    // Insert form data into tbl_profile
-    $insert_query = "INSERT INTO tbl_profile (firstname, lastname, phoneno, address, uid) VALUES ('$firstname', '$lastname', '$phone', '$address', '$uid')";
-
-    if (mysqli_query($conn, $insert_query)) {
-        // Insertion successful
+    if (mysqli_query($conn, $update_query)) {
+        // Update successful
         echo "Profile updated successfully";
     } else {
         // Error handling
-        echo "Error: " . $insert_query . "<br>" . mysqli_error($conn);
+        echo "Error: " . $update_query . "<br>" . mysqli_error($conn);
     }
 }
 
@@ -197,31 +215,8 @@ mysqli_close($conn);
                                 <div class="header-cart-menu d-flex align-items-center ml-auto">
                                     <!-- Cart Area -->
                                     <div class="cart">
-                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
-                                        <!-- Cart List Area Start -->
-                                        <ul class="cart-list">
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
-                                                    <p>1x - <span class="price">₹3,290</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
-                                                    <p>1x - <span class="price">₹1,690</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li class="total">
-                                                <span class="pull-right">Total: ₹4,980.00</span>
-                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
-                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
-                                            </li>
-                                        </ul>
+                                        <a href="cart.php" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        
                                     </div>
                                     <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
@@ -287,12 +282,12 @@ mysqli_close($conn);
             <form action="#" method="POST">
                 <div class="form-group">
                     <label for="firstname">First Name:</label>
-                    <input type="text" id="firstname" name="firstname" required>
+                    <input type="text" id="firstname" name="firstname" value="<?php echo $firstname; ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="lastname">Last Name:</label>
-                    <input type="text" id="lastname" name="lastname" required>
+                    <input type="text" id="lastname" name="lastname" value="<?php echo $lastname; ?>" required>
                 </div>
                 
                 <div class="form-group">    
@@ -302,12 +297,12 @@ mysqli_close($conn);
 
                 <div class="form-group">
                     <label for="phone">Phone Number:</label>
-                    <input type="tel" id="phone" name="phone" required>
+                    <input type="tel" id="phone" name="phone" value="<?php echo $phone; ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="address">Address:</label>
-                    <textarea id="address" name="address" rows="3" cols="30" required></textarea>
+                    <textarea id="address" name="address" rows="3" cols="30" required><?php echo $address; ?></textarea>
                 </div>
 
                 <input type="submit" value="Update">

@@ -243,7 +243,7 @@ header("Expires: 0");
                     <h4 class="product-price">₹<?php echo $row['price']; ?></h4>
                     <p><?php echo $row['p_name']; ?></p>
                     <!-- Add to Cart -->
-                    <a href="#" class="add-to-cart-btn">ADD TO CART</a>
+                    <a href="login.php" class="add-to-cart-btn">ADD TO CART</a>
                 </div>
             </div>
 
@@ -278,10 +278,10 @@ header("Expires: 0");
                                                 </div>
                                                 <h5 class="price">₹<?php echo $row['price']; ?></h5>
                                                 <p><?php echo $row['description']; ?></p>
-                                                <a href="product-details.php">View Full Product Details</a>
+                                                <a href="login.php">View Full Product Details</a>
                                             </div>
                                             <!-- Add to Cart Form -->
-                                            <form class="cart" method="post">
+                                            <form class="cart" action="login.php" method="post">
                                                 <div class="quantity">
                                                     <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
 
@@ -292,7 +292,7 @@ header("Expires: 0");
                                                 <button type="submit" name="addtocart" value="5" class="cart-submit">Add to cart</button>
                                                 <!-- Wishlist -->
                                                 <div class="modal_pro_wishlist">
-                                                    <a href="wishlist.php" target="_blank"><i class="ti-heart"></i></a>
+                                                    <a href="login.php" target="_blank"><i class="ti-heart"></i></a>
                                                 </div>
                                             </form>
 
@@ -334,7 +334,7 @@ header("Expires: 0");
                             <div class="offer-product-price">
                                 <h3><span class="regular-price">$25.90</span> $15.90</h3>
                             </div>
-                            <a href="#" class="btn karl-btn mt-30">Shop Now</a>
+                            <a href="login.php" class="btn karl-btn mt-30">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -427,11 +427,11 @@ header("Expires: 0");
                     <div class="col-12 col-sm-6 col-md-3 col-lg-2">
                         <div class="single_footer_area">
                             <ul class="footer_widget_menu">
-                                <li><a href="#">About</a></li>
-                                <li><a href="#">Blog</a></li>
+                                <li><a href="guestabout.php">About</a></li>
+                                <li><a href="guestblog.php">Blog</a></li>
                                 <li><a href="#">Faq</a></li>
                                 <li><a href="#">Returns</a></li>
-                                <li><a href="#">Contact</a></li>
+                                <li><a href="guestcontact.php">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -439,10 +439,10 @@ header("Expires: 0");
                     <div class="col-12 col-sm-6 col-md-3 col-lg-2">
                         <div class="single_footer_area">
                             <ul class="footer_widget_menu">
-                                <li><a href="#">My Account</a></li>
-                                <li><a href="#">Shipping</a></li>
-                                <li><a href="#">Our Policies</a></li>
-                                <li><a href="#">Afiliates</a></li>
+                                <li><a href="login.php">My Account</a></li>
+                                <li><a href="login.php">Shipping</a></li>
+                                <li><a href="login.php">Our Policies</a></li>
+                                <li><a href="login.php">Afiliates</a></li>
                             </ul>
                         </div>
                     </div>
@@ -453,7 +453,7 @@ header("Expires: 0");
                                 <h6>Subscribe to our newsletter</h6>
                             </div>
                             <div class="subscribtion_form">
-                                <form action="#" method="post">
+                                <form action="login.php" method="post">
                                     <input type="email" name="mail" class="mail" placeholder="Your email here">
                                     <button type="submit" class="submit">Subscribe</button>
                                 </form>

@@ -102,31 +102,8 @@ if (isset($_SESSION['username'])) {
                                 <div class="header-cart-menu d-flex align-items-center ml-auto">
                                     <!-- Cart Area -->
                                     <div class="cart">
-                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
-                                        <!-- Cart List Area Start -->
-                                        <ul class="cart-list">
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
-                                                    <p>1x - <span class="price">₹3,290</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
-                                                    <p>1x - <span class="price">₹1,690</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li class="total">
-                                                <span class="pull-right">Total: ₹4,980.00</span>
-                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
-                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
-                                            </li>
-                                        </ul>
+                                        <a href="cart.php" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        
                                     </div>
                                     <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
@@ -169,7 +146,7 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                      <a class="dropdown-item" href="uprofile.php">Profile</a>
-                                                     <a class="dropdown-item" href="#">Wishlist</a>
+                                                     
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>
                                             </li>
@@ -185,247 +162,58 @@ if (isset($_SESSION['username'])) {
         <!-- ****** Header Area End ****** -->
 
         <div class="page-content">
-            <div class="container2">
-
-                <div class="entry-container max-col-2" data-layout="fitRows">
-                    <div class="entry-item lifestyle shopping col-sm-6">
-                        <article class="entry entry-grid text-center">
-                            <figure class="entry-media">
-                                <a href="single.html">
-                                    <img src="assets/images/blog/grid/2cols/post-1.jpg" alt="image desc">
-                                </a>
-                            </figure><!-- End .entry-media -->
-
-                            <div class="entry-body">
-                                <div class="entry-meta">
-                                    <span class="entry-author">
-                                        by <a href="#">John Doe</a>
-                                    </span>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">Nov 22, 2018</a>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">2 Comments</a>
-                                </div><!-- End .entry-meta -->
-
-                                <h2 class="entry-title">
-                                    <a href="single.html">Cras ornare tristique elit.</a>
-                                </h2><!-- End .entry-title -->
-
-                                <div class="entry-cats">
-                                    in <a href="#">Lifestyle</a>,
-                                    <a href="#">Shopping</a>
-                                </div><!-- End .entry-cats -->
-
-                                <div class="entry-content">
-                                    <p>Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Suspendisse potenti. Sed egestas vulputate ...</p>
-                                    <a href="single.html" class="read-more">Continue Reading</a>
-                                </div><!-- End .entry-content -->
-                            </div><!-- End .entry-body -->
-                        </article><!-- End .entry -->
-                    </div><!-- End .entry-item -->
-
-                    <div class="entry-item lifestyle col-sm-6">
-                        <article class="entry entry-grid text-center">
-                            <figure class="entry-media entry-video">
-                                <a href="single.html">
-                                    <img src="assets/images/blog/grid/2cols/post-2.jpg" alt="image desc">
-                                </a>
-                            </figure><!-- End .entry-media -->
-
-                            <div class="entry-body">
-                                <div class="entry-meta">
-                                    <span class="entry-author">
-                                        by <a href="#">John Doe</a>
-                                    </span>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">Nov 21, 2018</a>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">0 Comments</a>
-                                </div><!-- End .entry-meta -->
-
-                                <h2 class="entry-title">
-                                    <a href="single.html">Vivamus vestibulum ntulla necante.</a>
-                                </h2><!-- End .entry-title -->
-
-                                <div class="entry-cats">
-                                    in <a href="#">Lifestyle</a>
-                                </div><!-- End .entry-cats -->
-
-                                <div class="entry-content">
-                                    <p>Morbi purus libero, faucibus commodo quis, gravida id, est. Vestibulumvolutpat, lacus a ultrices sagittis, mi neque euismod dui ...</p>
-                                    <a href="single.html" class="read-more">Continue Reading</a>
-                                </div><!-- End .entry-content -->
-                            </div><!-- End .entry-body -->
-                        </article><!-- End .entry -->
-                    </div><!-- End .entry-item -->
-
-                    <div class="entry-item lifestyle fashion col-sm-6">
-                        <article class="entry entry-grid text-center">
-                            <figure class="entry-media">
-                                <div class="owl-carousel owl-simple owl-light owl-nav-inside" data-toggle="owl">
+    <div class="container2">
+        <div class="title1">
+            <h3 style="color: white; margin-top: 20px; padding-top: 30px; font-family: Californian FB; font-weight: 900;">Style Tips</h3>
+        </div>
+        <div class="entry-container max-col-2" data-layout="fitRows">
+            <?php
+            include('connect.php');
+            $sql11 = "SELECT * FROM tbl_tip";
+            $result = $conn->query($sql11);
+            while ($row = $result->fetch_assoc()) {
+            ?>
+                <div class="entry-item lifestyle shopping col-sm-5" style="margin-right: 30px; margin-top: 40px;">
+                    <div class="row">
+                        <div class="col-md-5" style="width: 100px; height: auto;">
+                            <article class="entry entry-grid text-center">
+                                <figure class="entry-media" style="margin-left: 10px; margin-top: 30px;">
                                     <a href="single.html">
-                                        <img src="assets/images/blog/grid/2cols/post-3.jpg" alt="image desc">
+                                        <img style="height: 100%; width: 100%;" src="img/tip-img/<?php echo $row['image']; ?>">
                                     </a>
-                                    <a href="single.html">
-                                        <img src="assets/images/blog/grid/2cols/post-1.jpg" alt="image desc">
-                                    </a>
-                                </div><!-- End .owl-carousel -->
-                            </figure><!-- End .entry-media -->
-
+                                </figure><!-- End .entry-media -->
+                            </article><!-- End .entry -->
+                        </div><!-- End .col-md-6 -->
+                        <div class="col-md-6">
                             <div class="entry-body">
-                                <div class="entry-meta">
+                                <div class="entry-meta" style="margin-top: 10px;">
                                     <span class="entry-author">
-                                        by <a href="#">John Doe</a>
+                                        by <a href="#">Admin</a>
                                     </span>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">Nov 18, 2018</a>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">3 Comments</a>
+                                    
                                 </div><!-- End .entry-meta -->
 
-                                <h2 class="entry-title">
-                                    <a href="single.html">Utaliquam sollicitudin leo.</a>
-                                </h2><!-- End .entry-title -->
 
-                                <div class="entry-cats">
-                                    in <a href="#">Fashion</a>,
-                                    <a href="#">Lifestyle</a>
-                                </div><!-- End .entry-cats -->
-
-                                <div class="entry-content">
-                                    <p>Sed pretium, ligula sollicitudin laoreet viverra, tortor libero sodales leo, eget blandit nunc tortor eu nibh. Suspendisse potenti. Sed egestas ... </p>
-                                    <a href="single.html" class="read-more">Continue Reading</a>
+                                <div class="entry-content" style="margin-top: 20px;">
+                                    <p><?php
+                                        echo $row['tipdescription'];
+                                    ?></p> <!-- Assuming 'tip_content' is a column in tbl_tip -->
                                 </div><!-- End .entry-content -->
                             </div><!-- End .entry-body -->
-                        </article><!-- End .entry -->
-                    </div><!-- End .entry-item -->
+                        </div><!-- End .col-md-6 -->
+                    </div><!-- End .row -->
+                </div><!-- End .entry-item -->
+            <?php
+            }
+            ?>
+        </div><!-- End .entry-container -->
 
-                    <div class="entry-item travel col-sm-6">
-                        <article class="entry entry-grid text-center">
-                            <figure class="entry-media">
-                                <a href="single.html">
-                                    <img src="assets/images/blog/grid/2cols/post-4.jpg" alt="image desc">
-                                </a>
-                            </figure><!-- End .entry-media -->
+        
+    </div><!-- End .container -->
+</div><!-- End .page-content -->
+</main><!-- End .main -->
 
-                            <div class="entry-body">
-                                <div class="entry-meta">
-                                    <span class="entry-author">
-                                        by <a href="#">Jane Doe</a>
-                                    </span>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">Nov 15, 2018</a>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">4 Comments</a>
-                                </div><!-- End .entry-meta -->
 
-                                <h2 class="entry-title">
-                                    <a href="single.html">Fusce pellentesque suscipit.</a>
-                                </h2><!-- End .entry-title -->
-
-                                <div class="entry-cats">
-                                    in <a href="#">Travel</a>
-                                </div><!-- End .entry-cats -->
-
-                                <div class="entry-content">
-                                    <p>Praesent dapibus, neque id cursus faucibus, tortor neque egestas auguae, eu vulputate magna eros eu erat. Aliquam erat volutpat ... </p>
-                                    <a href="single.html" class="read-more">Continue Reading</a>
-                                </div><!-- End .entry-content -->
-                            </div><!-- End .entry-body -->
-                        </article><!-- End .entry -->
-                    </div><!-- End .entry-item -->
-
-                    <div class="entry-item travel hobbies col-sm-6">
-                        <article class="entry entry-grid text-center">
-                            <figure class="entry-media">
-                                <a href="single.html">
-                                    <img src="assets/images/blog/grid/2cols/post-5.jpg" alt="image desc">
-                                </a>
-                            </figure><!-- End .entry-media -->
-
-                            <div class="entry-body">
-                                <div class="entry-meta">
-                                    <span class="entry-author">
-                                        by <a href="#">John Doe</a>
-                                    </span>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">Nov 11, 2018</a>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">2 Comments</a>
-                                </div><!-- End .entry-meta -->
-
-                                <h2 class="entry-title">
-                                    <a href="single.html">Aenean dignissim pellente squefelis.</a>
-                                </h2><!-- End .entry-title -->
-
-                                <div class="entry-cats">
-                                    in <a href="#">Travel</a>,
-                                    <a href="#">Hobbies</a>
-                                </div><!-- End .entry-cats -->
-
-                                <div class="entry-content">
-                                    <p>Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus. Phasellus ultrices nulla quis nibh. Quisque lectus ... </p>
-                                    <a href="single.html" class="read-more">Continue Reading</a>
-                                </div><!-- End .entry-content -->
-                            </div><!-- End .entry-body -->
-                        </article><!-- End .entry -->
-                    </div><!-- End .entry-item -->
-
-                    <div class="entry-item hobbies col-sm-6">
-                        <article class="entry entry-grid text-center">
-                            <figure class="entry-media">
-                                <a href="single.html">
-                                    <img src="assets/images/blog/grid/2cols/post-6.jpg" alt="image desc">
-                                </a>
-                            </figure><!-- End .entry-media -->
-
-                            <div class="entry-body">
-                                <div class="entry-meta">
-                                    <span class="entry-author">
-                                        by <a href="#">John Doe</a>
-                                    </span>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">Nov 10, 2018</a>
-                                    <span class="meta-separator">|</span>
-                                    <a href="#">4 Comments</a>
-                                </div><!-- End .entry-meta -->
-
-                                <h2 class="entry-title">
-                                    <a href="single.html">Quisque volutpat mattiseros.</a>
-                                </h2><!-- End .entry-title -->
-
-                                <div class="entry-cats">
-                                    in <a href="#">Hobbies</a>
-                                </div><!-- End .entry-cats -->
-
-                                <div class="entry-content">
-                                    <p>Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus. Phasellus ultrices nulla quis nibh. Quisque lectus. Donec consectetuer ... </p>
-                                    <a href="single.html" class="read-more">Continue Reading</a>
-                                </div><!-- End .entry-content -->
-                            </div><!-- End .entry-body -->
-                        </article><!-- End .entry -->
-                    </div><!-- End .entry-item -->
-                </div><!-- End .entry-container -->
-
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link page-link-prev" href="#" aria-label="Previous" tabindex="-1" aria-disabled="true">
-                                <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
-                            </a>
-                        </li>
-                        <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item">
-                            <a class="page-link page-link-next" href="#" aria-label="Next">
-                                Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div><!-- End .container -->
-        </div><!-- End .page-content -->
-    </main><!-- End .main -->
 
 
         <!-- ****** Footer Area Start ****** -->

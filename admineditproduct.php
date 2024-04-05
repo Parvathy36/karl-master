@@ -52,6 +52,7 @@ if(isset($_GET['p_id']) && !empty($_GET['p_id'])) {
         $errorMessage = "Product not found.";
     }
 }
+
 // Handle form submission for updating product
 if(isset($_POST['Update'])) {
     // Retrieve form data
@@ -119,31 +120,15 @@ if(isset($_POST['Update'])) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Product</title>
-    <style>
-        /* Add your CSS styles here */
-    </style>
-    <script>
-        function toggleSubcategories() {
-            var category = document.getElementById("category");
-            var categoryId = category.value;
-            var subcategories = document.querySelectorAll(".subcategories");
-
-            subcategories.forEach(function (element) {
-                element.style.display = "none";
-            });
-
-            var selectedSubcategory = document.getElementById("Subcategories" + categoryId);
-            if (selectedSubcategory) {
-                selectedSubcategory.style.display = "block";
-            }
-        }
-    </script>
+   
+    
 </head>
 <style>
     .header{
@@ -239,7 +224,7 @@ h4 {
 
 </style>
 <body>
-    <div class= "header">
+<div class= "header">
         <h4 style="color: white; margin-top: 10px; padding: 10px;">Update Product</h4><br>
     </div>
      
@@ -280,10 +265,10 @@ h4 {
             <label for="image">Product Image:</label>
             <!-- Display the current product image if available -->
             <?php if (isset($productDetails['image'])) { ?>
-            
-            <!-- Allow user to upload a new image if needed -->
-            <input type="file" id="image" name="image" accept="<?php echo $productDetails['image']; ?>"><br><br>
+                <img src="img/product-img/<?php echo $productDetails['image']; ?>" alt="Product Image" style="max-width: 200px;"><br><br>
             <?php } ?>
+            <!-- Allow user to upload a new image if needed -->
+            <input type="file" id="image" name="image" accept="image/*"><br><br>
 
             <input type="submit" value="Update" name="Update" style="width:120px; height:50px">
         </form>
@@ -293,4 +278,20 @@ h4 {
         <a href="javascript:history.go(-1);" style="color: white; text-decoration: none; ">Back to Dashboard</a>
     </div>
 </body>
+<script>
+        function toggleSubcategories() {
+            var category = document.getElementById("category");
+            var categoryId = category.value;
+            var subcategories = document.querySelectorAll(".subcategories");
+
+            subcategories.forEach(function (element) {
+                element.style.display = "none";
+            });
+
+            var selectedSubcategory = document.getElementById("Subcategories" + categoryId);
+            if (selectedSubcategory) {
+                selectedSubcategory.style.display = "block";
+            }
+        }
+    </script>
 </html>

@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 if (isset($_SESSION['username'])) {
@@ -11,15 +12,33 @@ if (isset($_SESSION['username'])) {
 
 include "connect.php";
 $email = "";
-    // Fetch email from tbl_register based on UID
-    $uid = $_SESSION['uid'];
-    
-    $select_query = "SELECT email FROM tbl_register WHERE uid = '$uid'";
-    $result = mysqli_query($conn, $select_query);
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        $email = $row['email'];
-    }
+// Fetch email from tbl_register based on UID
+$uid = $_SESSION['uid'];
+
+$select_query = "SELECT email FROM tbl_register WHERE uid = '$uid'";
+$result = mysqli_query($conn, $select_query);
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $email = $row['email'];
+}
+
+// Initialize variables to avoid warnings
+$firstname = "";
+$lastname = "";
+$phone = "";
+$address = "";
+
+// Retrieve existing profile data from tbl_profile
+$select_profile_query = "SELECT * FROM tbl_profile WHERE uid = '$uid'";
+$profile_result = mysqli_query($conn, $select_profile_query);
+if ($profile_result && mysqli_num_rows($profile_result) > 0) {
+    $profile_row = mysqli_fetch_assoc($profile_result);
+    $firstname = $profile_row['firstname'];
+    $lastname = $profile_row['lastname'];
+    $phone = $profile_row['phoneno'];
+    $address = $profile_row['address'];
+}
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
@@ -28,22 +47,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['phone'];
     $address = $_POST['address'];
 
+    // Update form data in tbl_profile
+    $update_query = "UPDATE tbl_profile SET firstname='$firstname', lastname='$lastname', phoneno='$phone', address='$address' WHERE uid='$uid'";
 
-    // Insert form data into tbl_profile
-    $insert_query = "INSERT INTO tbl_profile (firstname, lastname, phoneno, address, uid) VALUES ('$firstname', '$lastname', '$phone', '$address', '$uid')";
-
-    if (mysqli_query($conn, $insert_query)) {
-        // Insertion successful
+    if (mysqli_query($conn, $update_query)) {
+        // Update successful
         echo "Profile updated successfully";
     } else {
         // Error handling
-        echo "Error: " . $insert_query . "<br>" . mysqli_error($conn);
+        echo "Error: " . $update_query . "<br>" . mysqli_error($conn);
     }
 }
 
 // Close database connection
 mysqli_close($conn);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -139,12 +158,12 @@ mysqli_close($conn);
             <form action="#" method="POST">
                 <div class="form-group">
                     <label for="firstname">First Name:</label>
-                    <input type="text" id="firstname" name="firstname" required>
+                    <input type="text" id="firstname" name="firstname" value="<?php echo $firstname; ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="lastname">Last Name:</label>
-                    <input type="text" id="lastname" name="lastname" required>
+                    <input type="text" id="lastname" name="lastname" value="<?php echo $lastname; ?>" required>
                 </div>
                 
                 <div class="form-group">    
@@ -154,12 +173,12 @@ mysqli_close($conn);
 
                 <div class="form-group">
                     <label for="phone">Phone Number:</label>
-                    <input type="tel" id="phone" name="phone" required>
+                    <input type="tel" id="phone" name="phone" value="<?php echo $phone; ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="address">Address:</label>
-                    <textarea id="address" name="address" rows="3" cols="30" required></textarea>
+                    <textarea id="address" name="address" rows="3" cols="30" required><?php echo $address; ?></textarea>
                 </div>
 
                 <input type="submit" value="Edit">
@@ -167,6 +186,12 @@ mysqli_close($conn);
         </div>
         <!-- end body content -->
 
+        <!-- Previous page link outside the form -->
+    <div style="padding: 10px; display: flex; justify-content: center; align-items: center;" class="previous-page-link">
+        <a href="javascript:history.go(-1);" style="color: #922D21; text-decoration: none; font-weight: bold; ">Back to Dashboard</a>
     </div>
+    </div>
+
+    
 </body>
 </html>

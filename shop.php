@@ -8,7 +8,54 @@ if (isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
+
+
+
+include('connect.php');
+
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if the addtocart field is set
+    if (isset($_POST["addtocart"])) {
+        // Get the product ID and quantity from the form submission
+        $p_id = $_POST["addtocart"];
+        $quantity = isset($_POST["quantity"]) ? intval($_POST["quantity"]) : 1; // Default to 1 if quantity is not set or invalid
+        
+        // Check if the user is logged in
+        if (isset($_SESSION['uid'])) {
+            // If the user is logged in, get their UID (user ID)
+            $uid = $_SESSION['uid']; // Assuming user ID is stored in session variable 'uid'
+        } else {
+            // If user is not logged in, you might want to handle this case
+            // For example, redirect the user to login page
+            header("Location: login.php");
+            exit();
+        }
+
+        // Set default status
+        $status = 1;
+      
+        // Check if the product already exists in the cart
+        if(isset($_SESSION['cart'][$p_id])) {
+            // If the product is already in the cart, update the quantity
+            $_SESSION['cart'][$p_id]['quantity'] += $quantity;
+        } else {
+            // Otherwise, insert the product into the cart
+            // Insert into tbl_cart
+            $sql_insert = "INSERT INTO tbl_cart (p_id, uid, status, quantity) VALUES (?, ?, ?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            $stmt_insert->bind_param("iiii", $p_id, $uid, $status, $quantity);
+            $stmt_insert->execute();
+        }
+        
+        // Redirect the user to avoid form resubmission
+        header("Location: cart.php");
+        exit();
+    }
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -103,35 +150,13 @@ if (isset($_SESSION['username'])) {
                                 <div class="header-cart-menu d-flex align-items-center ml-auto">
                                     <!-- Cart Area -->
                                     <div class="cart">
-                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
-                                        <!-- Cart List Area Start -->
-                                        <ul class="cart-list">
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
-                                                    <p>1x - <span class="price">₹3,290</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
-                                                    <p>1x - <span class="price">₹1,690</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li class="total">
-                                                <span class="pull-right">Total: ₹4,980.00</span>
-                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
-                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
-                                            </li>
-                                        </ul>
+                                        <a href="cart.php" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        
                                     </div>
-                                    <div class="header-right-side-menu ml-15">
+
+                                <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
-                                    </div>
+                                </div>
                                     
                                 </div>
                             </div>
@@ -170,7 +195,6 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                      <a class="dropdown-item" href="uprofile.php">Profile</a>
-                                                     <a class="dropdown-item" href="#">Wishlist</a>
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>
                                             </li>
@@ -229,31 +253,11 @@ if (isset($_SESSION['username'])) {
                             </div>
 
                             <div class="widget price mb-50">
-                                <h6 class="widget-title mb-30">Filter by Price</h6>
-                                <div class="widget-desc">
-                                    <div class="slider-range">
-                                        <div data-min="0" data-max="10000" data-unit="₹" class="slider-range-price ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" data-value-min="0" data-value-max="10000" data-label-result="Price:">
-                                            <div class="ui-slider-range ui-widget-header ui-corner-all"></div>
-                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                            <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0"></span>
-                                        </div>
-                                        <div class="range-price">Price: 0 - 10000</div>
-                                    </div>
-                                </div>
+                                
                             </div>
 
                             <div class="widget color mb-70">
-                                <h6 class="widget-title mb-30">Filter by Color</h6>
-                                <div class="widget-desc">
-                                    <ul class="d-flex justify-content-between">
-                                        <li class="gray"><a href="#"><span>(3)</span></a></li>
-                                        <li class="red"><a href="#"><span>(25)</span></a></li>
-                                        <li class="yellow"><a href="#"><span>(112)</span></a></li>
-                                        <li class="green"><a href="#"><span>(72)</span></a></li>
-                                        <li class="teal"><a href="#"><span>(9)</span></a></li>
-                                        <li class="cyan"><a href="#"><span>(29)</span></a></li>
-                                    </ul>
-                                </div>
+                                
                             </div>
 
                             
@@ -297,17 +301,20 @@ if (isset($_SESSION['username'])) {
                         </div>
                     </div>
 
+
                     <div class="col-12 col-md-8 col-lg-9">
                         <div class="shop_grid_product_area">
                             <div class="row">
                             <?php
-                            include('connect.php');
-$sql11 = "SELECT * FROM tbl_products";
-$result = $conn->query($sql11);
-$productCount = 0; // Counter for displayed products
-while ($row = $result->fetch_assoc() and $productCount < 9) {
-    $productCount++;
-    ?>
+include('connect.php');
+
+// Fetching products from database
+$sql = "SELECT * FROM tbl_products WHERE status = 1  LIMIT 9"; // Limiting to 9 products
+$result = $conn->query($sql);
+
+// Loop through the fetched products
+while ($row = $result->fetch_assoc()) {
+?>
     <div class="col-12 col-sm-6 col-lg-4 single_gallery_item wow fadeInUpBig" data-wow-delay="0.2s">
         <div class="product-img">
             <img src="img/product-img/<?php echo $row['image']; ?>" alt="">
@@ -318,7 +325,7 @@ while ($row = $result->fetch_assoc() and $productCount < 9) {
         <div class="product-description">
             <h4 class="product-price">₹<?php echo $row['price']; ?></h4>
             <p><?php echo $row['p_name']; ?></p>
-            <a href="#" class="add-to-cart-btn">ADD TO CART</a>
+            
         </div>
     </div>
 
@@ -356,20 +363,30 @@ while ($row = $result->fetch_assoc() and $productCount < 9) {
                                     <p><?php echo $row['description']; ?></p>
                                     <a href="product-details.php?p_id=<?php echo $row['p_id']; ?>">View Full Product Details</a>
                                 </div>
-                                <!-- Add to Cart Form -->
+                               <!-- Add to Cart Form -->
                                 <form class="cart" method="post">
+                                    <input type="hidden" name="addtocart" value="<?php echo $row['image']; ?>">
+                                    <input type="hidden" name="addtocart" value="<?php echo $row['p_name']; ?>">
+                                    <input type="hidden" name="addtocart" value="<?php echo $row['price']; ?>">
+                                    <?php
+                                        // Fetching maximum quantity from tbl_stock
+                                        $stmt = $conn->prepare("SELECT qty AS max_quantity FROM tbl_stock WHERE p_id = ?");
+                                        $stmt->bind_param("i", $row['p_id']);
+                                        $stmt->execute();
+                                        $result_qty = $stmt->get_result();
+                                        $maxQuantityRow = $result_qty->fetch_assoc();
+                                        $maxQuantity = $maxQuantityRow['max_quantity'];
+                                        ?>
                                     <div class="quantity">
-                                        <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                        <span class="qty-minus" onclick="var effect = document.getElementById('qty<?php echo $row['p_id']; ?>'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                        
+                                        <input type="number" class="qty-text" id="qty<?php echo $row['p_id']; ?>" step="1" min="1" max="<?php echo $maxQuantity; ?>" name="quantity" value="1">
 
-                                        <input type="number" class="qty-text" id="qty" step="1" min="1" max="12" name="quantity" value="1">
-
-                                        <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                        <span class="qty-plus" onclick="var effect = document.getElementById('qty<?php echo $row['p_id']; ?>'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                     </div>
-                                    <button type="submit" name="addtocart" value="5" class="cart-submit">Add to cart</button>
-                                    <!-- Wishlist -->
-                                    <div class="modal_pro_wishlist">
-                                        <a href="wishlist.php" target="_blank"><i class="ti-heart"></i></a>
-                                    </div>
+                                    <button type="submit" name="addtocart" value="<?php echo $row['p_id']; ?>" class="cart-submit">Add to cart</button>
+                                    
+                                    
                                 </form>
 
                                 <div class="share_wf mt-30">
@@ -492,6 +509,8 @@ while ($row = $result->fetch_assoc() and $productCount < 9) {
     <script src="js/plugins.js"></script>
     <!-- Active js -->
     <script src="js/active.js"></script>
+
+    
 
 </body>
 

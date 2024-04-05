@@ -174,7 +174,6 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                      <a class="dropdown-item" href="#">Profile</a>
-                                                     <a class="dropdown-item" href="#">Wishlist</a>
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>
                                             </li>
@@ -198,6 +197,7 @@ if (isset($_SESSION['username'])) {
             </div>
         <!-- content -->
         <div class="page-content1">
+            <p></p>
             <h1>COMPANY PROFILE</h1>
             <p>With names like AND, Global Desi, AND Girl, Global Desi Girl, and itse on its brand roster; Ochre & Black
                 Private Limited is an esteemed organization in the fashion circuit today. From housing the sophistication of

@@ -140,10 +140,10 @@ button.btn-danger:hover {
             <li><a href="adminmanagetip.php"><i class="fas fa-lightbulb"></i>
                     <span>Manage Tips</span></a>
             </li>
-            <li><a href="adminorder.php"><i class="fas fa-clipboard-list"></i>
+            <li class="active"><a href="adminorder.php"><i class="fas fa-clipboard-list"></i>
                     <span>Orders</span></a>
             </li>
-            <li class="active"><a href="adminuserrec.php"><i class="fas fa-users"></i>
+            <li><a href="adminuserrec.php"><i class="fas fa-users"></i>
                     <span>Users Record</span></a>
             </li>
             <li class="logout"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>
@@ -171,30 +171,31 @@ button.btn-danger:hover {
                 <thead>
                     <tr class="text-dark">
                         <th scope="col">Sl no.</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Action</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Phone No.</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Total amount</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     include 'connect.php';
 
-                    $sql = "SELECT * FROM tbl_register WHERE username NOT LIKE 'admin' AND email NOT LIKE 'admin@example.com'";
+                    $sql = "SELECT o.total, p.firstname, p.phoneno, p.address
+                    FROM tbl_order AS o
+                    INNER JOIN tbl_profile AS p ON o.uid = p.uid";
                     $result = $conn->query($sql);
                     $sl=0;
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>
                                     <td> ".++$sl."</td>
-                                    <td>" . $row['username'] . "</td>
-                                    <td>" . $row['email'] . "</td>
-                                    <td>
-                                        
-                                            <button type='submit' name='act' class='btn btn-sm btn-success'>Approve</button><br><br>
-                                            <button type='submit' name='del' class='btn btn-sm btn-danger'>Reject</button>
-                                        
-                                    </td>
+                                    <td>" . $row['firstname'] . "</td>
+                                    <td>" . $row['phoneno'] . "</td>
+                                    <td>" . $row['address'] . "</td>
+                                    <td>" . $row['total'] . "</td>
+                                    
                                 </tr>";
                         }
                     } else {
@@ -208,27 +209,7 @@ button.btn-danger:hover {
 </div>
 
 
-        <script>
-        // JavaScript for handling button clicks and showing/hiding tabs
-        document.addEventListener("DOMContentLoaded", function () {
-            var addBtn = document.getElementById('addBtn');
-            var viewBtn = document.getElementById('viewBtn');
-            var addProductForm = document.getElementById('addProductForm');
-            var viewProducts = document.getElementById('viewProducts');
-
-            addBtn.addEventListener('click', function () {
-                addProductForm.classList.add('active-tab');
-                viewProducts.classList.remove('active-tab');
-            });
-
-            viewBtn.addEventListener('click', function () {
-                viewProducts.classList.add('active-tab');
-                addProductForm.classList.remove('active-tab');
-            });
-
-            // Add more JavaScript functionality here, such as form submission handling
-        });
-
+        
         
     </div>
 </body>

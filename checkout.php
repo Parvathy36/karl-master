@@ -8,6 +8,46 @@ if (isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
+
+include "connect.php";
+$email = "";
+// Fetch email from tbl_register based on UID
+$uid = $_SESSION['uid'];
+
+$select_query = "SELECT email FROM tbl_register WHERE uid = '$uid'";
+$result = mysqli_query($conn, $select_query);
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $email = $row['email'];
+}
+
+// Initialize variables to avoid warnings
+$firstname = "";
+$lastname = "";
+$phone = "";
+$address = "";
+
+// Retrieve existing profile data from tbl_profile
+$select_profile_query = "SELECT * FROM tbl_profile WHERE uid = '$uid'";
+$profile_result = mysqli_query($conn, $select_profile_query);
+if ($profile_result && mysqli_num_rows($profile_result) > 0) {
+    $profile_row = mysqli_fetch_assoc($profile_result);
+    $firstname = $profile_row['firstname'];
+    $lastname = $profile_row['lastname'];
+    $phone = $profile_row['phoneno'];
+    $address = $profile_row['address'];
+}
+
+
+if(isset($_POST['checkout'])){
+    $total = $_POST['total'];
+    $sql = "INSERT INTO tbl_order(uid,total) values('$uid','$total')";
+    // $sql1 = "SELECT total from tbl_order where uid =$uid";
+    $result = mysqli_query($conn, $sql);
+    
+}
+// Close database connection
+mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,31 +142,8 @@ if (isset($_SESSION['username'])) {
                                 <div class="header-cart-menu d-flex align-items-center ml-auto">
                                     <!-- Cart Area -->
                                     <div class="cart">
-                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
-                                        <!-- Cart List Area Start -->
-                                        <ul class="cart-list">
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
-                                                    <p>1x - <span class="price">₹3,290</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
-                                                    <p>1x - <span class="price">₹1,690</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li class="total">
-                                                <span class="pull-right">Total: ₹4,980.00</span>
-                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
-                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
-                                            </li>
-                                        </ul>
+                                        <a href="cart.php" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        
                                     </div>
                                     <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
@@ -169,7 +186,7 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                      <a class="dropdown-item" href="uprofile.php">Profile</a>
-                                                     <a class="dropdown-item" href="#">Wishlist</a>
+                                                     
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>
                                             </li>
@@ -200,44 +217,24 @@ if (isset($_SESSION['username'])) {
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="first_name">First Name <span>*</span></label>
-                                        <input type="text" class="form-control" id="first_name" value="" required>
+                                        <input type="text" class="form-control" id="first_name" value="<?php echo $firstname; ?>" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="last_name">Last Name <span>*</span></label>
-                                        <input type="text" class="form-control" id="last_name" value="" required>
+                                        <input type="text" class="form-control" id="last_name" value="<?php echo $lastname; ?>" readonly>
                                     </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="country">Country <span>*</span></label>
-                                        <select class="custom-select d-block w-100" id="country">
-                                        <option value="usa">United States</option>
-                                        <option value="uk">United Kingdom</option>
-                                        <option value="ger">Germany</option>
-                                        <option value="fra">France</option>
-                                        <option value="ind">India</option>
-                                        <option value="aus">Australia</option>
-                                        <option value="bra">Brazil</option>
-                                        <option value="cana">Canada</option>
-                                    </select>
-                                    </div>
+                                    
                                     <div class="col-12 mb-3">
                                         <label for="street_address">Address <span>*</span></label>
-                                        <input type="text" class="form-control mb-3" id="street_address" value="">
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="postcode">Postcode <span>*</span></label>
-                                        <input type="text" class="form-control" id="postcode" value="">
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="city">Town/City <span>*</span></label>
-                                        <input type="text" class="form-control" id="city" value="">
+                                        <input type="text" class="form-control mb-3" id="street_address" value="<?php echo $address; ?>" readonly>
                                     </div>
                                     <div class="col-12 mb-3">
                                         <label for="phone_number">Phone No <span>*</span></label>
-                                        <input type="number" class="form-control" id="phone_number" min="0" value="">
+                                        <input type="number" class="form-control" id="phone_number" min="0" value="<?php echo $phone; ?>"readonly>
                                     </div>
                                     <div class="col-12 mb-4">
                                         <label for="email_address">Email Address <span>*</span></label>
-                                        <input type="email" class="form-control" id="email_address" value="">
+                                        <input type="email" class="form-control" id="email_address" value="<?php echo $email; ?>" readonly>
                                     </div>
 
                                     <div class="col-12">
@@ -257,15 +254,11 @@ if (isset($_SESSION['username'])) {
                             </div>
 
                             <ul class="order-details-form mb-4">
-                                <li><span>Product</span> <span>Total</span></li>
-                                <li><span>Cocktail Yellow dress</span> <span>$59.90</span></li>
-                                <li><span>Subtotal</span> <span>$59.90</span></li>
-                                <li><span>Shipping</span> <span>Free</span></li>
-                                <li><span>Total</span> <span>$59.90</span></li>
+                                <li>₹<?php echo $total;?></li>
                             </ul>
 
 
-                            <div id="accordion" role="tablist" class="mb-4">
+                            <!-- <div id="accordion" role="tablist" class="mb-4">
                                 <div class="card">
                                     <div class="card-header" role="tab" id="headingOne">
                                         <h6 class="mb-0">
@@ -291,9 +284,9 @@ if (isset($_SESSION['username'])) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <a href="#" class="btn karl-checkout-btn">Place Order</a>
+                            <button id="rzp-button1" class="btn karl-checkout-btn">Place Order</button>
                         </div>
                     </div>
 
@@ -384,6 +377,73 @@ if (isset($_SESSION['username'])) {
     <script src="js/plugins.js"></script>
     <!-- Active js -->
     <script src="js/active.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+       
+    <script>
+            $('#rzp-button1').click(function(event) {
+
+                // Prevent the default form submission behavior
+                event.preventDefault();
+
+                var price = "<?php echo $total; ?>"; // Get the total price from PHP
+                var buynow = document.getElementById('bookingform');
+                var buynowbutton = document.getElementById('rzp-button1');
+                var tid = document.getElementById('tid');
+                if (price <= 0) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Your Product is not available",
+                       
+                    }).then(() => {
+                            window.location.href = "cart.php";
+                        });
+
+                }
+                var options = {
+                    "key": "rzp_test_PvONxFHJQComjc", // Enter the Key ID generated from the Dashboard
+                    "amount": price * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                    "currency": "INR",
+                    "name": "PlantHaven",
+                    "description": "Transaction",
+                    "image": "https://s.tmimgcdn.com/scr/1200x750/328400/eco-leaf-green-tree-tea-leaf-and-nature-leaf-logo-v34_328405-original.jpg",
+                    // "order_id": "order_IluGWxBm9U8zJ8", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                    "handler": function(response) {
+                        tid.value = (response.razorpay_payment_id);
+                        buynowbutton.value = true;
+                        buynow.submit();
+                    },
+                    // "prefill": {
+                    //     "name": "Gaurav Kumar",
+                    //     "email": "gaurav.kumar@example.com",
+                    //     "contact": "9000090000"
+                    // },
+                    // "notes": {
+                    //     "address": "Razorpay Corporate Office"
+                    // },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function(response) {
+                    alert(response.error.code);
+                    alert(response.error.description);
+                    alert(response.error.source);
+                    alert(response.error.step);
+                    alert(response.error.reason);
+                    alert(response.error.metadata.order_id);
+                    alert(response.error.metadata.payment_id);
+                });
+                document.getElementById('rzp-button1').onclick = function(e) {
+                    rzp1.open();
+                    e.preventDefault();
+                }
+            });
+    </script>
+
 
 </body>
 

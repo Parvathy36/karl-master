@@ -18,54 +18,59 @@ if(isset($_POST['Add'])) {
         // Handle file upload for the image
         $image_name = $_FILES['image']['name'];
         $image_tmp = $_FILES['image']['tmp_name'];
-        $image_size = $_FILES['image']['size'];
 
-        // Open the file for binary reading
-        $fp = fopen($image_tmp, 'r');
-        $image_data = fread($fp, filesize($image_tmp));
-        $image_data = addslashes($image_data);
-        fclose($fp);
+        // Specify the target directory
+        $target_directory = "img/product-img/";
 
-        // Extract other form data
-        $productName = mysqli_real_escape_string($conn, $_POST['productName']);
-        $description = mysqli_real_escape_string($conn, $_POST['description']);
-        $price = (float)$_POST['price'];
-        $category_id = (int)$_POST['category'];
-        $subcategory_id = null; // Initialize subcategory_id
+        // Get the base name of the uploaded file
+        $image_basename = basename($_FILES['image']['name']);
 
-        // Determine the subcategory based on the selected category
-        if ($category_id >= 1 && $category_id <= 3) {
-            $subcat_key = 'Subcategory'.$category_id;
-            if(isset($_POST[$subcat_key])){
-                $subcategory_id = (int)$_POST[$subcat_key];
+        // Combine the target directory and the image base name to get the full target file path
+        $target_file = $target_directory . $image_basename;
+
+        // Move the uploaded file to the target directory
+        if (move_uploaded_file($image_tmp, $target_file)) {
+            // Extract other form data
+            $productName = mysqli_real_escape_string($conn, $_POST['productName']);
+            $description = mysqli_real_escape_string($conn, $_POST['description']);
+            $price = (float)$_POST['price'];
+            $category_id = (int)$_POST['category'];
+            $subcategory_id = null; // Initialize subcategory_id
+
+            // Determine the subcategory based on the selected category
+            if ($category_id >= 1 && $category_id <= 3 && isset($_POST['Subcategory'.$category_id])) {
+                $subcategory_id = (int)$_POST['Subcategory'.$category_id];
             }
-        }
 
-        // Prepare SQL statement with placeholders for the image
-        $sql = "INSERT INTO tbl_products (p_name, description, price, category_id, image, subcategory_id)
-                VALUES (?, ?, ?, ?, ?, ?)";
+            // Prepare SQL statement to insert product details
+            $sql = "INSERT INTO tbl_products (p_name, description, price, category_id, image, subcategory_id)
+                    VALUES (?, ?, ?, ?, ?, ?)";
 
-        // Prepare the statement
-        $stmt = mysqli_prepare($conn, $sql);
-        if ($stmt) {
-            // Bind parameters to the statement
-            mysqli_stmt_bind_param($stmt, "ssisis", $productName, $description, $price, $category_id, $image_data, $subcategory_id);
+            // Prepare the statement
+            $stmt = mysqli_prepare($conn, $sql);
+            if ($stmt) {
+                // Bind parameters to the statement
+                mysqli_stmt_bind_param($stmt, "ssisis", $productName, $description, $price, $category_id, $target_file, $subcategory_id);
 
-            // Execute the statement
-            if (mysqli_stmt_execute($stmt)) {
-                $alert_message = 'Product added successfully.';
+                // Execute the statement
+                if (mysqli_stmt_execute($stmt)) {
+                    $alert_message = 'Product added successfully.';
+                } else {
+                    $alert_message = 'Error: ' . mysqli_stmt_error($stmt);
+                }
+                mysqli_stmt_close($stmt);
             } else {
-                $alert_message = 'Error: ' . mysqli_stmt_error($stmt);
+                $alert_message = 'Error: Unable to prepare statement: ' . mysqli_error($conn);
             }
-            mysqli_stmt_close($stmt);
         } else {
-            $alert_message = 'Error: Unable to prepare statement: ' . mysqli_error($conn);
+            $alert_message = 'Error: Failed to move uploaded file.';
         }
     } else {
         $alert_message = 'Error: Required fields are empty.';
     }
 }
 ?>
+
 
 <?php
 
@@ -106,6 +111,11 @@ foreach ($categories as $categoryId => $category) {
     <title>Admin dashboard</title>
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Include SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+
+<!-- Include SweetAlert JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         function toggleSubcategories() {
             var category = document.getElementById("category");
@@ -286,7 +296,7 @@ button.btn-danger:hover {
             <li><a href="adminmanagetip.php"><i class="fas fa-lightbulb"></i>
                     <span>Manage Tips</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-clipboard-list"></i>
+            <li><a href="adminorder.php"><i class="fas fa-clipboard-list"></i>
                     <span>Orders</span></a>
             </li>
             <li><a href="adminuserrec.php"><i class="fas fa-users"></i>
@@ -374,53 +384,96 @@ button.btn-danger:hover {
         </tr>
         <!-- Fetch products from the database and display them in the table -->
         <?php
-        require_once 'connect.php';
-        
-        // Perform SQL query to fetch products
-        $sql = "SELECT 
+require_once 'connect.php';
+
+// Action handler for deleting a product
+if(isset($_POST['del']) && isset($_POST['p_id'])) {
+    $product_id = $_POST['p_id'];
+
+    // Fetch the current status of the product
+    $status_query = "SELECT status FROM tbl_products WHERE p_id = $product_id";
+    $status_result = mysqli_query($conn, $status_query);
+    
+    if($status_result && mysqli_num_rows($status_result) > 0) {
+        $row = mysqli_fetch_assoc($status_result);
+        $current_status = $row['status'];
+
+        // Toggle the status
+        $new_status = $current_status == 0 ? 1 : 0;
+
+        // Update the status in the database
+        $update_sql = "UPDATE tbl_products SET status = $new_status WHERE p_id = $product_id";
+        if(mysqli_query($conn, $update_sql)) {
+            echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Product status toggled successfully',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                // Optionally, you can add a callback function here
+            });
+            </script>";
+        } else {
+            echo "Error updating product status: " . mysqli_error($conn);
+        }
+    } else {
+        echo "Error fetching product status: " . mysqli_error($conn);
+    }
+}
+
+// Perform SQL query to fetch products
+$sql = "SELECT 
             p.p_id,
             p.p_name, 
             p.description, 
             p.price, 
             c.category_name, 
             s.subcategory_name, 
-            p.image 
+            p.image,
+            p.status 
         FROM tbl_products p 
         LEFT JOIN tbl_category c ON p.category_id = c.category_id 
-        LEFT JOIN tbl_subcate s ON p.subcategory_id = s.subcategory_id";
-        $result = mysqli_query($conn, $sql);
-        $sl=0;
-        if (mysqli_num_rows($result) > 0) {
-            // Output data of each row
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo "<tr>
-                        <td> ".++$sl."</td>
-                        <td>" . $row['p_name'] . "</td>
-                        <td>" . $row['description'] . "</td>
-                        <td>₹" . $row['price'] . "</td>
-                        <td>" . $row['category_name'] . "</td>                                                  
-                        <td>" . $row['subcategory_name'] . "</td>
-                        <td><img src='img/product-img/" . $row['image'] . "' width='100' height='135'></td>
-                        <td> </td>
-                        <td>
-                        <a href='admineditproduct.php?p_id=" . $row['p_id'] . "'>
-                            <button name='act' class='btn btn-sm btn-success'>
-                                <i class='fa fa-pencil' aria-hidden='true'></i>
-                            </button>
-                        </a><br><br>
-                        <button type='submit' name='del' class='btn btn-sm btn-danger'>
-                            <i class='fa fa-trash' aria-hidden='true'></i>
-                        </button>
-                    </td>
-                  </tr>";
-        }
-        } else {
-            echo "<tr><td colspan='7'>No products found</td></tr>";
-        }
+        LEFT JOIN tbl_subcate s ON p.subcategory_id = s.subcategory_id"; 
+$result = mysqli_query($conn, $sql);
+$sl = 0;
+if (mysqli_num_rows($result) > 0) {
+    // Output data of each row
+    while ($row = mysqli_fetch_assoc($result)) {
+        // Determine the status text based on the status value
+        $status_text = $row['status'] == 1 ? 'Active' : 'Inactive';
 
-        // Close the database connection
-        // mysqli_close($result);
-        ?>
+        echo "<tr>
+                <td> " . ++$sl . "</td>
+                <td>" . $row['p_name'] . "</td>
+                <td>" . $row['description'] . "</td>
+                <td>₹" . $row['price'] . "</td>
+                <td>" . $row['category_name'] . "</td>                                                  
+                <td>" . $row['subcategory_name'] . "</td>
+                <td><img src='img/product-img/" . $row['image'] . "' width='100' height='135'></td>
+                <td>$status_text</td>
+                <td>
+                <a href='admineditproduct.php?p_id=" . $row['p_id'] . "'>
+                    <button name='act' class='btn btn-sm btn-success'>
+                        <i class='fa fa-pencil' aria-hidden='true'></i>
+                    </button>
+                </a><br><br>
+                <form method='post' action='#'> 
+                    <input type='hidden' name='p_id' value='" . $row['p_id'] . "'>
+                    <button type='submit' name='del' class='btn btn-sm btn-danger'>
+                        <i class='fa fa-trash' aria-hidden='true'></i>
+                    </button>
+                </form>
+            </td>
+            </tr>";
+    }
+} else {
+    echo "<tr><td colspan='8'>No active products found</td></tr>";
+}
+
+// Close the database connection
+mysqli_close($conn);
+?>
     </table>
 </div>
 
@@ -544,13 +597,51 @@ if(isset($_POST['addsubcat'])) {
 
 
 <?php
+
+
 include 'connect.php';
+// Action handler for deleting a product
+if(isset($_POST['del']) && isset($_POST['category_id'])) {
+    $category_id = $_POST['category_id'];
+
+    // Fetch the current status of the product
+    $status_query = "SELECT status FROM tbl_category WHERE category_id = $category_id";
+    $status_result = mysqli_query($conn, $status_query);
+    
+    if($status_result && mysqli_num_rows($status_result) > 0) {
+        $row = mysqli_fetch_assoc($status_result);
+        $current_status = $row['status'];
+
+        // Toggle the status
+        $new_status = $current_status == 0 ? 1 : 0;
+
+        // Update the status in the database
+        $update_sql = "UPDATE tbl_category SET status = $new_status WHERE category_id = $category_id";
+        if(mysqli_query($conn, $update_sql)) {
+            echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Category status toggled successfully',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                // Optionally, you can add a callback function here
+            });
+            </script>";
+        } else {
+            echo "Error updating category status: " . mysqli_error($conn);
+        }
+    } else {
+        echo "Error fetching category status: " . mysqli_error($conn);
+    }
+}
+
 // Fetch and display category list from tbl_category
-$sql_categories = "SELECT category_name FROM tbl_category";
+$sql_categories = "SELECT category_id,category_name FROM tbl_category";
 $result_categories = mysqli_query($conn, $sql_categories);
 
 // Fetch and display subcategory data from tbl_subcate
-$sql_subcategories = "SELECT s.subcategory_name, c.category_name FROM tbl_subcate s LEFT JOIN tbl_category c ON s.category_id = c.category_id ";
+$sql_subcategories = "SELECT s.subcategory_id,s.subcategory_name, c.category_name FROM tbl_subcate s LEFT JOIN tbl_category c ON s.category_id = c.category_id ";
 $result_subcategories = mysqli_query($conn, $sql_subcategories);
 mysqli_close($conn);
 ?>
@@ -562,6 +653,7 @@ mysqli_close($conn);
         <tr>
             <th>Sl no.</th>
             <th>Category Name</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         <?php
@@ -571,11 +663,21 @@ mysqli_close($conn);
                 echo "<tr>
                         <td> ".++$sl."</td>
                         <td>" . $row['category_name'] . "</td>
+                        <td>$status_text</td>
                         <td>
                             
-                                <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
-                                <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
-                            
+                                <a href='admineditcategory.php?category_id=" . $row['category_id'] . "'>
+                                    <button name='act' class='btn btn-sm btn-success'>
+                                        <i class='fa fa-pencil' aria-hidden='true'></i>
+                                    </button>
+                                </a><br><br>
+                                <form method='post' action='#'> 
+                                    <input type='hidden' name='p_id' value='" . $row['category_id'] . "'>
+                                    <button type='submit' name='del' class='btn btn-sm btn-danger'>
+                                        <i class='fa fa-trash' aria-hidden='true'></i>
+                                    </button>
+                                </form>
+             
                         </td>
                     </tr>";
             }
@@ -585,6 +687,8 @@ mysqli_close($conn);
         ?>
     </table>
 </div>
+
+
 
 <!-- Display subcategory data -->
 <div id="subcategoryListContainer" class="categoryListContainer" style="display:none;">
@@ -606,7 +710,11 @@ mysqli_close($conn);
                         <td>" . $row['category_name'] . "</td>
                         <td>
                             
-                                <button type='submit' name='act' class='btn btn-sm btn-success'><i class='fa fa-pencil' aria-hidden='true'></i></button><br><br>
+                                <a href='admineditsubcategory.php?subcategory_id=" . $row['subcategory_id'] . "'>
+                                <button name='act' class='btn btn-sm btn-success'>
+                                    <i class='fa fa-pencil' aria-hidden='true'></i>
+                                </button>
+                                </a><br><br>
                                 <button type='submit' name='del' class='btn btn-sm btn-danger'><i class='fa fa-trash' aria-hidden='true'></i></button>
                             
                         </td>

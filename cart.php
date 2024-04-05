@@ -32,6 +32,8 @@ if (isset($_SESSION['username'])) {
     <!-- Responsive CSS -->
     <link href="css/responsive.css" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 
 <body>
@@ -102,31 +104,8 @@ if (isset($_SESSION['username'])) {
                                 <div class="header-cart-menu d-flex align-items-center ml-auto">
                                     <!-- Cart Area -->
                                     <div class="cart">
-                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
-                                        <!-- Cart List Area Start -->
-                                        <ul class="cart-list">
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
-                                                    <p>1x - <span class="price">₹3,290</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
-                                                    <p>1x - <span class="price">₹1,690</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li class="total">
-                                                <span class="pull-right">Total: ₹4,980.00</span>
-                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
-                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
-                                            </li>
-                                        </ul>
+                                        <a href="cart.php" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        
                                     </div>
                                     <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
@@ -169,7 +148,7 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                      <a class="dropdown-item" href="uprofile.php">Profile</a>
-                                                     <a class="dropdown-item" href="#">Wishlist</a>
+                                                     
                                                      <a class="dropdown-item" href="logout.php">Logout</a>
                                                 </div>
                                             </li>
@@ -187,93 +166,108 @@ if (isset($_SESSION['username'])) {
         <!-- ****** Top Discount Area End ****** -->
 
         <!-- ****** Cart Area Start ****** -->
-        <div class="cart_area section_padding_100 clearfix">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="cart-table clearfix">
-                            <table class="table table-responsive">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Price</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="cart_product_img d-flex align-items-center">
-                                            <a href="#"><img src="img/product-img/dresses1.jpg" alt="Product"></a>
-                                            <h6>Monochrome Gardenia Dress</h6>
-                                        </td>
-                                        <td class="price"><span>₹3,290</span></td>
-                                        <td class="qty">
-                                            <div class="quantity">
-                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="99" name="quantity" value="1">
-                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                            </div>
-                                        </td>
-                                        <td class="total_price"><span>₹3,290</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="cart_product_img d-flex align-items-center">
-                                            <a href="#"><img src="img/product-img/tops.jpg" alt="Product"></a>
-                                            <h6>Cloudy Day Cotton Shirt</h6>
-                                        </td>
-                                        <td class="price"><span>₹1,690</span></td>
-                                        <td class="qty">
-                                            <div class="quantity">
-                                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) && qty > 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="99" name="quantity" value="1">
-                                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                            </div>
-                                        </td>
-                                        <td class="total_price"><span>₹1,690</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+<div class="cart_area section_padding_100 clearfix">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="cart-table clearfix">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>     </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            require_once "connect.php";
 
-                        <div class="cart-footer d-flex mt-30">
-                            <div class="back-to-shop w-50">
-                                <a href="shop-grid-left-sidebar.html">Continue shopping</a>
-                            </div>
-                            <div class="update-checkout w-50 text-right">
-                                <a href="#">Update cart</a>
-                            </div>
-                        </div>
+                            $sql = "SELECT c.p_id, c.quantity, c.status, p.p_name, p.image, p.price 
+                                    FROM tbl_cart c
+                                    INNER JOIN tbl_products p ON c.p_id = p.p_id AND c.status = 1";
 
+                            $result = mysqli_query($conn, $sql);
+
+                            $subtotal = 0;
+
+                            if ($result) {
+                                if (mysqli_num_rows($result) > 0) {
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo "<tr>";
+                                        echo "<td class='cart_product_img d-flex align-items-center'>";
+                                        echo "<a href='#'><img src='img/product-img/" . $row["image"] . "' alt='Product'></a>";
+                                        echo "<h6>" . $row["p_name"] . "</h6>";
+                                        echo "</td>";
+                                        echo "<td class='price'><span>₹" . $row["price"] . "</span></td>";
+                                        echo "<td class='qty'>";
+                                        echo "<div class='quantity'>";
+                                        echo "<span class='qty-minus' onclick='updateQuantity(" . $row["p_id"] . ", -1)'><i class='fa fa-minus' aria-hidden='true'></i></span>";
+                                        echo "<input type='number' class='qty-text' id='qty" . $row["p_id"] . "' step='1' min='1' max='99' name='quantity' value='" . $row["quantity"] . "'>";
+                                        echo "<span class='qty-plus' onclick='updateQuantity(" . $row["p_id"] . ", 1)'><i class='fa fa-plus' aria-hidden='true'></i></span>";
+                                        echo "</div>";
+                                        echo "</td>";
+                                        echo "<td class='total_price'><span>₹" . $row["price"] * $row["quantity"] . "</span></td>";
+                                        echo "<td><i class='material-icons'>delete</i></td>";
+                                        echo "</tr>";
+
+                                        $subtotal += ($row["price"] * $row["quantity"]);
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='4'>No items in the cart</td></tr>";
+                                }
+                            } else {
+                                echo "Error: " . mysqli_error($conn);
+                            }
+
+                            mysqli_close($conn);
+
+                            $total = $subtotal;
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="cart-footer d-flex mt-30">
+                    <div class="back-to-shop w-50">
+                        <a href="shop.php">Continue shopping</a>
+                    </div>
+                    <div class="update-checkout w-50 text-right">
+                        <a href="#">Update cart</a>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-12 col-md-6 col-lg-4">
-                        
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-4">
-                       
-                    </div>
-                    <div class="col-12 col-lg-4">
-                        <div class="cart-total-area mt-70">
-                            <div class="cart-page-heading">
-                                <h5>Cart total</h5>
-                                <p>Final info</p>
-                            </div>
+            </div>
+        </div>
 
-                            <ul class="cart-total-chart">
-                                <li><span>Subtotal</span> <span>$59.90</span></li>
-                                <li><span>Shipping</span> <span>Free</span></li>
-                                <li><span><strong>Total</strong></span> <span><strong>$59.90</strong></span></li>
-                            </ul>
-                            <a href="checkout.php" class="btn karl-checkout-btn">Proceed to checkout</a>
-                        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="cart-total-area mt-70">
+                    <div class="cart-page-heading">
+                        <h5>Cart total</h5>
+                        <p>Final info</p>
                     </div>
+                     <form action="checkout.php" method="post">
+                    <ul class="cart-total-chart">
+                        <li><span>Subtotal</span> <span>₹<?php echo number_format($subtotal, 2); ?></span></li>
+                        <li><span>Shipping</span> <span>Free</span></li>
+                        <li><span><strong>Total</strong></span> <span><strong>₹<?php echo number_format($total, 2); ?></strong></span></li>
+                    </ul>
+                    <input type="hidden" name="total" value="<?php echo $total; ?>"/>
+                    <a href="checkout.php"><button type="submit" class="btn karl-checkout-btn" name="checkout">Proceed to checkout</button></a>
+                    </form>
                 </div>
             </div>
         </div>
-        <!-- ****** Cart Area End ****** -->
+    </div>
+</div>
+<!-- ****** Cart Area End ****** -->
 
         <!-- ****** Footer Area Start ****** -->
         <footer class="footer_area">
@@ -359,5 +353,17 @@ if (isset($_SESSION['username'])) {
     <script src="js/active.js"></script>
 
 </body>
+
+<script>
+    function updateQuantity(productId, change) {
+        var input = document.getElementById('qty' + productId);
+        var quantity = parseInt(input.value);
+        quantity += change;
+        if (quantity < 1 || isNaN(quantity)) {
+            quantity = 1;
+        }
+        input.value = quantity;
+    }
+</script>
 
 </html>

@@ -102,31 +102,8 @@ if (isset($_SESSION['username'])) {
                                 <div class="header-cart-menu d-flex align-items-center ml-auto">
                                     <!-- Cart Area -->
                                     <div class="cart">
-                                        <a href="#" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
-                                        <!-- Cart List Area Start -->
-                                        <ul class="cart-list">
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/dresses1.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Monochrome Gardenia Dress</a></h6>
-                                                    <p>1x - <span class="price">₹3,290</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/tops.jpg" class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Cloudy Day Cotton Shirt</a></h6>
-                                                    <p>1x - <span class="price">₹1,690</span></p>
-                                                </div>
-                                                <span class="dropdown-product-remove"><i class="icon-cross"></i></span>
-                                            </li>
-                                            <li class="total">
-                                                <span class="pull-right">Total: ₹4,980.00</span>
-                                                <a href="cart.php" class="btn btn-sm btn-cart">Cart</a>
-                                                <a href="checkout.php" class="btn btn-sm btn-checkout">Checkout</a>
-                                            </li>
-                                        </ul>
+                                        <a href="cart.php" id="header-cart-btn" target="_blank"><i class="ti-bag"></i></a>
+                                        
                                     </div>
                                     <div class="header-right-side-menu ml-15">
                                         <a href="#" id="sideMenuBtn"><i class="ti-menu" aria-hidden="true"></i></a>
@@ -168,7 +145,6 @@ if (isset($_SESSION['username'])) {
                                             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $user ?></a>
                                               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                    <a class="dropdown-item" href="uprofile.php">Profile</a>
-                                                   <a class="dropdown-item" href="#">Wishlist</a>
                                                    <a class="dropdown-item" href="logout.php">Logout</a>
                                               </div>
                                             </li>  
@@ -263,7 +239,7 @@ if (isset($_SESSION['username'])) {
         <div class="row karl-new-arrivals">
             <?php
             include('connect.php');
-            $sql11 = "SELECT * FROM tbl_products";
+            $sql11 = "SELECT * FROM tbl_products where status=1";
             $result = $conn->query($sql11);
             while ($row = $result->fetch_assoc()){
             ?>
@@ -280,8 +256,7 @@ if (isset($_SESSION['username'])) {
                 <div class="product-description">
                     <h4 class="product-price">₹<?php echo $row['price']; ?></h4>
                     <p><?php echo $row['p_name']; ?></p>
-                    <!-- Add to Cart -->
-                    <a href="#" class="add-to-cart-btn">ADD TO CART</a>
+                    
                 </div>
             </div>
 
@@ -316,7 +291,7 @@ if (isset($_SESSION['username'])) {
                                                 </div>
                                                 <h5 class="price">₹<?php echo $row['price']; ?></h5>
                                                 <p><?php echo $row['description']; ?></p>
-                                                <a href="product-details.php">View Full Product Details</a>
+                                                <a href="product-details.php?p_id=<?php echo $row['p_id']; ?>">View Full Product Details</a>
                                             </div>
                                             <!-- Add to Cart Form -->
                                             <form class="cart" method="post">
@@ -372,7 +347,7 @@ if (isset($_SESSION['username'])) {
                             <div class="offer-product-price">
                                 <h3><span class="regular-price">$25.90</span> $15.90</h3>
                             </div>
-                            <a href="#" class="btn karl-btn mt-30">Shop Now</a>
+                            <a href="shop.php" class="btn karl-btn mt-30">Shop Now</a>
                         </div>
                     </div>
                 </div>

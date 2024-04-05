@@ -211,7 +211,7 @@ button.btn-danger:hover {
             <li class="active"><a href="adminmanagetip.php"><i class="fas fa-lightbulb"></i>
                     <span>Manage Tips</span></a>
             </li>
-            <li><a href="#"><i class="fas fa-clipboard-list"></i>
+            <li><a href="adminorder.php"><i class="fas fa-clipboard-list"></i>
                     <span>Orders</span></a>
             </li>
             <li><a href="adminuserrec.php"><i class="fas fa-users"></i>
